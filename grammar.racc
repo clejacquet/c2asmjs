@@ -1,0 +1,60 @@
+class Scanner
+  prechigh
+    left '/'
+    left '*'
+    left '+' '-'
+  preclow
+
+    options no_result_var
+
+    token INT_VAL
+    token FLOAT_VAL
+    token IDENTIFIER
+
+    start program
+
+  rule
+    program
+    : statement_list { puts @vars }
+
+    statement_list
+    : statement statement_list
+    |
+
+    statement
+    : IDENTIFIER '=' expr ';' { @vars[val[0].to_sym] = val[2] }
+
+    expr
+    : expr '+' expr { val[0] + val[2] }
+    | expr '-' expr { val[0] - val[2] }
+    | expr '*' expr { val[0] * val[2] }
+    | expr '/' expr { val[0] / val[2] }
+    | value         { val[0] }
+
+    value
+    : INT_VAL   { val[0] }
+    | FLOAT_VAL { val[0] }
+end
+
+---- header ----
+
+require_relative 'scanner.rex'
+
+---- inner ----
+
+def initialize
+    @vars = Hash.new
+end
+
+def on_error(t, val, vstack)
+    puts "Error: unexpected token (at line #{lineno}): #{val}"
+end
+
+---- footer ----
+
+if ARGV.size >= 1
+    scanner = Scanner.new
+    scanner.scan_file ARGV[0]
+else
+    raise 'Error, no filename provided !'
+end
