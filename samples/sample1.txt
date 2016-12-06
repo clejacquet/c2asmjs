@@ -1,2 +1,5 @@
-test = 50 + 25 / 5 + 25;
-coucou = 128.25;
+int main() {
+    int a = 5;
+    int b, c = a *= 2;
+    return a + b + c;
+}

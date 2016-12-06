@@ -3,7 +3,7 @@ macro
     digit             [0-9]
     letter            [a-zA-Z_]
     integer           {digit}+
-    float             {digit}+\.{digit}*
+    float             {digit}+\.{digit}*f?
     identifier        {letter}({letter}|{digit})*
     word              {letter}+
 
@@ -22,22 +22,44 @@ rule
                     while               { [:WHILE, text] }
                     for                 { [:FOR, text] }
                     do                  { [:DO, text] }
+                    return              { [:RETURN, text] }
 
                     \+\=                { [:ADD_ASSIGN, text] }
                     -\=                 { [:SUB_ASSIGN, text] }
                     \*\=                { [:MUL_ASSIGN, text] }
                     \/\=                { [:DIV_ASSIGN, text] }
+                    <<\=                { [:SHL_ASSIGN, text] }
+                    >>\=                { [:SHR_ASSIGN, text] }
+                    \+\+                { [:INC_OP, text] }
+                    \-\-                { [:DEC_OP, text] }
+                    <\=                 { [:LE_OP, text] }
+                    >\=                 { [:GE_OP, text] }
+                    \=\=                { [:EQ_OP, text] }
+                    \!\=                { [:NE_OP, text] }
 
                     \+                  { ['+', text] }
                     -                   { ['-', text] }
                     \*                  { ['*', text] }
                     \/                  { ['/', text] }
-                    %                   { ['%', text] }
-                    \=                  { ['=', text] }
-                    ;                   { [';', text] }
+                    %                   { [:REM, text] }
+                    >>                  { [:SHR, text] }
+                    <<                  { [:SHL, text] }
+                    <                   { ['<', text] }
+                    >                   { ['>', text] }
+                    \|\|                { [:OR, text] }
+                    &&                  { [:AND, text] }
 
-                    {float}             { [:FLOAT_VAL, text.to_f] }
-                    {integer}           { [:INT_VAL, text.to_i] }
+                    \=                  { ['=', text] }
+                    \.                  { ['.', text] }
+                    ,                   { [',', text] }
+                    ;                   { [';', text] }
+                    \{                  { ['{', text] }
+                    \}                  { ['}', text] }
+                    \(                  { ['(', text] }
+                    \)                  { [')', text] }
+
+                    {float}             { [:CONSTANTF, text.to_f] }
+                    {integer}           { [:CONSTANTI, text.to_i] }
 
                     {identifier}        { [:IDENTIFIER, text] }
 
