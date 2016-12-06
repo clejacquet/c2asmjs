@@ -45,7 +45,7 @@ class Scanner
     | shift_expression SHR additive_expression
 
     primary_expression
-    : IDENTIFIER                                        { @id_table.check_id(val[0]); }
+    : IDENTIFIER                                        { @id_table.check_id(val[0], lineno); }
     | CONSTANTI
     | CONSTANTF
     | '(' expression ')'
@@ -105,8 +105,8 @@ class Scanner
     | SUB_ASSIGN
 
     declaration
-    : type_name declarator_list ';'                     { val[1].each { |id| @id_table.add_id(id, val[0]) } }
-    | type_name declarator_list '=' expression ';'      { val[1].each { |id| @id_table.add_id(id, val[0]) } }
+    : type_name declarator_list ';'                     { val[1].each { |id| @id_table.add_id(id, val[0], lineno) } }
+    | type_name declarator_list '=' expression ';'      { val[1].each { |id| @id_table.add_id(id, val[0], lineno) } }
 
     declarator_list
     : declarator                        { [ val[0] ] }

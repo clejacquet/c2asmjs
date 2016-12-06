@@ -8,15 +8,15 @@ class IdentifierTable
     @table = Hash.new
   end
 
-  def add_id(id, type)
-    raise AlreadyDefinedError, id if @table.has_key? id.to_sym
+  def add_id(id, type, line_num=-1)
+    raise AlreadyDefinedError, id, line_num if @table.has_key? id.to_sym
     # raise InvalidValueTypePairError, value, type unless TypeVerification.is_value_of_type?(value, type)
 
     @table[id.to_sym] = type
   end
 
-  def has_type(id)
-    raise IdentifierNotDefinedError, id.to_sym unless @table.has_key? id.to_sym
+  def has_type(id, line_num=-1)
+    raise IdentifierNotDefinedError, id.to_sym, line_num unless @table.has_key? id.to_sym
 
     @table[id.to_sym]
   end
@@ -29,7 +29,7 @@ class IdentifierTable
   end
 =end
 
-  def check_id(id)
-    raise IdentifierNotDefinedError, id.to_sym unless @table.has_key? id.to_sym
+  def check_id(id, line_num=-1)
+    raise IdentifierNotDefinedError, id.to_sym, line_num unless @table.has_key? id.to_sym
   end
 end
