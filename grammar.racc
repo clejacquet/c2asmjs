@@ -64,21 +64,21 @@ class Scanner
     : postfix_expression                                { val[0] }
     | INC_OP unary_expression
     | DEC_OP unary_expression
-    | unary_operator unary_expression                   { NegIExpr.new(val[1]) }
+    | unary_operator unary_expression                   { NegExpr.new(val[1]) }
 
     unary_operator
     : '-'
 
     multiplicative_expression
     : unary_expression                                      { val[0] }
-    | multiplicative_expression '*' unary_expression        { MulIExpr.new(val[0], val[2]) }
-    | multiplicative_expression '/' unary_expression        { DivIExpr.new(val[0], val[2]) }
-    | multiplicative_expression REM unary_expression        { RemIExpr.new(val[0], val[2]) }
+    | multiplicative_expression '*' unary_expression        { MulExpr.new(val[0], val[2]) }
+    | multiplicative_expression '/' unary_expression        { DivExpr.new(val[0], val[2]) }
+    | multiplicative_expression REM unary_expression        { RemExpr.new(val[0], val[2]) }
 
     additive_expression
     : multiplicative_expression                             { val[0] }
-    | additive_expression '+' multiplicative_expression     { AddIExpr.new(val[0], val[2]) }
-    | additive_expression '-' multiplicative_expression     { SubIExpr.new(val[0], val[2]) }
+    | additive_expression '+' multiplicative_expression     { AddExpr.new(val[0], val[2]) }
+    | additive_expression '-' multiplicative_expression     { SubExpr.new(val[0], val[2]) }
 
     comparison_expression
     : shift_expression                                  { val[0] }
@@ -138,7 +138,7 @@ class Scanner
     | jump_statement
 
     compound_statement
-    : '{' '}'
+    : '{' '}'                                       { Array.new }
     | '{' statement_list '}'                        { val[1] }
 
     statement_list
@@ -193,8 +193,7 @@ require_relative '../core/core'
 ---- inner ----
 
 def initialize
-    @id_table = IdentifierTable.new
-    @scope = Scope.new(@id_table);
+    @scope = @scope = Scope.new(IdentifierTable.new, nil)
 end
 
 def on_error(t, val, vstack)

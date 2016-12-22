@@ -4,7 +4,7 @@ class ConstantIExpr < ConstantExpr
   protected
 
   def op
-    'add'
+    Type.to_llvm_op('+', type)
   end
 
   def type

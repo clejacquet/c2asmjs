@@ -19,23 +19,31 @@ class Declaration
   private
 
   def code_no_expr(scope)
-    llvm_type = Type.to_llvm(@type)
-
     @declarator_list.reduce('') do |acc, id|
       reg = scope.new_register_var(id)
-      acc + "%#{reg} = alloca #{llvm_type}\n"
+      acc + allocation(reg)
     end
   end
 
   def code_expr(scope)
-    expr_code, expr_reg = @expr.code(scope)
-    llvm_type = Type.to_llvm(@type)
+    expr_code, expr_reg, expr_type = @expr.code(scope)
 
     alloc_code = @declarator_list.reduce('') do |acc, id|
       reg = scope.new_register_var(id)
-      acc + "%#{reg} = alloca #{llvm_type}\nstore #{llvm_type} %#{expr_reg}, #{llvm_type}* %#{reg}\n"
+      conversion_code, expr_reg = Type.build_conversion(expr_type, @type, expr_reg, scope)
+      acc + allocation(reg) + conversion_code + store(reg, expr_reg)
     end
 
     expr_code + alloc_code
+  end
+
+  def allocation(reg)
+    llvm_type = Type.to_llvm(@type)
+    "%#{reg} = alloca #{llvm_type}\n"
+  end
+
+  def store(reg, expr_reg)
+    llvm_type = Type.to_llvm(@type)
+    "store #{llvm_type} %#{expr_reg}, #{llvm_type}* %#{reg}\n"
   end
 end
