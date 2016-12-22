@@ -3,9 +3,5 @@ double coucou() {
 }
 
 int main() {
-    int d;
-    int a, b = 9;
-    d = a - 2 + 7;
-    double c = 50.25;
-    return d;
+    return 4 * ((3 + 7) / 5);
 }

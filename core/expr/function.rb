@@ -13,6 +13,6 @@ class Function
   def code(scope)
     "define #{Type.to_llvm(@type)} @#{@decl} {\n#{ @statements.reduce('') do |acc, statement|
       acc + statement.code(@scope)
-    end }}"
+    end }}\n\n"
   end
 end

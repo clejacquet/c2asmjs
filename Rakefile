@@ -10,6 +10,12 @@ task :run, [:file] => [:build] do |t, args|
   ruby "build/grammar.racc.rb #{args.file}"
 end
 
+task :test, [:file] => [:build] do |t, args|
+  sh "ruby build/grammar.racc.rb #{args.file} > samples/out.ll"
+  sh 'clang samples/out.ll -target x86_64-unknown-linux-gnu -o samples/out'
+  sh 'samples/out; echo $? 1>&2'
+end
+
 task :clean do
   sh 'rm -rf build'
 end
