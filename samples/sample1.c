@@ -2,14 +2,15 @@ int g = 3;
 double h = 20.2;
 
 int coucou() {
-    return g;
+    return h;
 }
 
 int test() {
-    g = 2;
+    g = 25 - h;
     return g;
 }
 
 int main() {
-    return test();
+    test();
+    return g;
 }
