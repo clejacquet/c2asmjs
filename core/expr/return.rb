@@ -13,7 +13,7 @@ class Return
         conversion_code, expr_reg = Type.build_conversion(expr_type, scope.return_type, expr_reg, scope)
       end
 
-      return "#{expr_code}#{conversion_code}ret #{Type.to_llvm(scope.return_type)} %#{expr_reg}\n"
+      "#{expr_code}#{conversion_code}ret #{Type.to_llvm(scope.return_type)} #{expr_reg}\n"
     else
       'ret void'
     end

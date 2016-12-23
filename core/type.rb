@@ -156,7 +156,7 @@ module Type
   def Type.build_conversion(src_type, dst_type, current_reg, scope)
     if dst_type != src_type
       new_reg = scope.new_register
-      return "%#{new_reg} = #{Type.llvm_conversion_instruction(src_type, dst_type, "%#{current_reg}")}\n", new_reg
+      return "#{new_reg} = #{Type.llvm_conversion_instruction(src_type, dst_type, current_reg)}\n", new_reg
     end
     return '', current_reg
   end

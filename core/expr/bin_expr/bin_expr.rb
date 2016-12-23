@@ -22,6 +22,10 @@ class BinExpr
 
     reg = scope.new_register
     prefix = expr1_code + expr2_code + conversion_code
-    return prefix + "%#{reg} = #{op(type)} #{Type.to_llvm(type)} %#{expr1_reg}, %#{expr2_reg}\n", reg, type
+    return prefix + "#{reg} = #{op(type)} #{Type.to_llvm(type)} #{expr1_reg}, #{expr2_reg}\n", reg, type
+  end
+
+  def try_eval
+    eval_calc(@expr1.try_eval, @expr2.try_eval)
   end
 end

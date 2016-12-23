@@ -104,8 +104,8 @@ class Scanner
     | SUB_ASSIGN
 
     declaration
-    : type_name declarator_list ';'                     { Declaration.new(val[0], val[1]) }
-    | type_name declarator_list '=' expression ';'      { Declaration.new(val[0], val[1], :expr, val[3]) }
+    : type_name declarator_list ';'                 { DeclarationBuilder.new(val[0], val[1]) }
+    | type_name declarator_list '=' expression ';'  { DeclarationBuilder.new(val[0], val[1], { mode: :expr, value: val[3] }) }
 
     declarator_list
     : IDENTIFIER                        { [ val[0] ] }
@@ -129,7 +129,7 @@ class Scanner
     : type_name IDENTIFIER                          { { type: val[0], id: val[1] } }
 
     statement
-    : declaration
+    : declaration                                   { val[0].build_inner }
     | compound_statement
     | expression_statement
     | selection_statement
@@ -178,7 +178,7 @@ class Scanner
 
     external_declaration
     : function_definition               { val[0] }
-    | declaration
+    | declaration                       { val[0].build_global }
 
     function_definition
     : type_name declarator compound_statement               { Function.new(val[0], val[1], val[2]) }
@@ -192,7 +192,7 @@ require_relative '../core/core'
 ---- inner ----
 
 def initialize
-    @scope = Scope.new(IdentifierTable.new, nil, nil)
+    @scope = GlobalScope.new(IdentifierTable.new)
 end
 
 def on_error(t, val, vstack)

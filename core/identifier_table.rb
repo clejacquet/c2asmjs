@@ -15,7 +15,7 @@ class IdentifierTable
     id
   end
 
-  def has_type(id, line_num=-1)
+  def get_type(id, line_num=-1)
     raise IdentifierNotDefinedError.new(id.to_sym, line_num) unless @table.has_key? id.to_sym
 
     @table[id.to_sym]
