@@ -8,5 +8,6 @@ int test() {
 }
 
 int main() {
-    return coucou(test(), 6) + test();
+    int c = (3 < 5);
+    return coucou(test(), 6 * c) + test();
 }

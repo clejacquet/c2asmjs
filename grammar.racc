@@ -82,12 +82,12 @@ class Scanner
 
     comparison_expression
     : shift_expression                                  { val[0] }
-    | comparison_expression '<' shift_expression
-    | comparison_expression '>' shift_expression
-    | comparison_expression LE_OP shift_expression
-    | comparison_expression GE_OP shift_expression
-    | comparison_expression EQ_OP shift_expression
-    | comparison_expression NE_OP shift_expression
+    | comparison_expression '<' shift_expression        { LtExpr.new(val[0], val[2]) }
+    | comparison_expression '>' shift_expression        { GtExpr.new(val[0], val[2]) }
+    | comparison_expression LE_OP shift_expression      { LeExpr.new(val[0], val[2]) }
+    | comparison_expression GE_OP shift_expression      { GeExpr.new(val[0], val[2]) }
+    | comparison_expression EQ_OP shift_expression      { EqExpr.new(val[0], val[2]) }
+    | comparison_expression NE_OP shift_expression      { NeExpr.new(val[0], val[2]) }
 
     expression
     : IDENTIFIER assignment_operator conditional_expression         { AssignmentExpr.new(val[0], val[2]) }

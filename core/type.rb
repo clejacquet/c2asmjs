@@ -47,6 +47,30 @@ module Type
           integer: 'srem',
           float: 'frem'
       },
+      '<': {
+          integer: 'icmp slt',
+          float: 'fcmp slt'
+      },
+      '>': {
+          integer: 'icmp sgt',
+          float: 'fcmp sgt'
+      },
+      LE_OP: {
+          integer: 'icmp sle',
+          float: 'fcmp sle'
+      },
+      GE_OP: {
+          integer: 'icmp sge',
+          float: 'fcmp sge'
+      },
+      EQ_OP: {
+          integer: 'icmp eq',
+          float: 'fcmp eq'
+      },
+      NE_OP: {
+          integer: 'icmp ne',
+          float: 'fcmp ne'
+      }
   }
 
   ##
