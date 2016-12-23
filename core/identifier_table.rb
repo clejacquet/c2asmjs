@@ -12,6 +12,7 @@ class IdentifierTable
     raise AlreadyDefinedError.new(id, line_num) if @table.has_key? id.to_sym
 
     @table[id.to_sym] = type
+    id
   end
 
   def has_type(id, line_num=-1)
@@ -20,8 +21,12 @@ class IdentifierTable
     @table[id.to_sym]
   end
 
+  def has_id?(id)
+    @table.has_key? id.to_sym
+  end
+
 
   def check_id(id, line_num=-1)
-    raise IdentifierNotDefinedError.new(id.to_sym, line_num) unless @table.has_key? id.to_sym
+    raise IdentifierNotDefinedError.new(id.to_sym, line_num) unless has_id?(id)
   end
 end

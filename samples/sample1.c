@@ -1,11 +1,12 @@
-double coucou() {
-    return 0.22;
+double coucou(int a, int b) {
+    return a + b;
 }
 
-void test() {
+int test() {
     int b = 8;
+    return b;
 }
 
 int main() {
-    return 5.5 + (5.6 - 2);
+    return coucou(test(), 6) + test();
 }

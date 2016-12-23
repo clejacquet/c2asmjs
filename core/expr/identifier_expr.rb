@@ -4,10 +4,9 @@ class IdentifierExpr
   end
 
   def code(scope)
-    scope.id_table.check_id(@id)
     reg = scope.new_register
-    type = scope.id_table.has_type(@id)
+    var, type = scope.get_id(@id)
     llvm_type = Type.to_llvm(type)
-    return "%#{reg} = load #{llvm_type}, #{llvm_type}* %#{scope.get_var_register(@id)}\n", reg, type
+    return "%#{reg} = load #{llvm_type}, #{llvm_type}* %#{var}\n", reg, type
   end
 end

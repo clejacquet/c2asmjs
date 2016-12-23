@@ -48,8 +48,8 @@ class Scanner
     | CONSTANTI                                         { ConstantIExpr.new(val[0]) }
     | CONSTANTF                                         { ConstantFExpr.new(val[0]) }
     | '(' expression ')'                                { val[1] }
-    | IDENTIFIER '(' ')'
-    | IDENTIFIER '(' argument_expression_list ')'
+    | IDENTIFIER '(' ')'                                { FunctionCallExpr.new(val[0]) }
+    | IDENTIFIER '(' argument_expression_list ')'       { FunctionCallExpr.new(val[0], val[2]) }
 
     postfix_expression
     : primary_expression                                { val[0] }
@@ -57,8 +57,8 @@ class Scanner
     | postfix_expression DEC_OP
 
     argument_expression_list
-    : expression
-    | argument_expression_list ',' expression
+    : expression                                        { [ val[0] ] }
+    | argument_expression_list ',' expression           { val[0].push(val[2]) }
 
     unary_expression
     : postfix_expression                                { val[0] }
@@ -90,7 +90,7 @@ class Scanner
     | comparison_expression NE_OP shift_expression
 
     expression
-    : IDENTIFIER assignment_operator conditional_expression         { Assignment.new(val[0], val[2]) }
+    : IDENTIFIER assignment_operator conditional_expression         { AssignmentExpr.new(val[0], val[2]) }
     | conditional_expression                                        { val[0] }
 
     assignment_operator
@@ -104,12 +104,12 @@ class Scanner
     | SUB_ASSIGN
 
     declaration
-    : type_name declarator_list ';'                     { Declaration.new(val[0], val[1], lineno) }
-    | type_name declarator_list '=' expression ';'      { Declaration.new(val[0], val[1], lineno, val[3]) }
+    : type_name declarator_list ';'                     { Declaration.new(val[0], val[1]) }
+    | type_name declarator_list '=' expression ';'      { Declaration.new(val[0], val[1], :expr, val[3]) }
 
     declarator_list
-    : declarator                        { [ val[0] ] }
-    | declarator_list ',' declarator    { val[0].push(val[2]) }
+    : IDENTIFIER                        { [ val[0] ] }
+    | declarator_list ',' IDENTIFIER    { val[0].push(val[2]) }
 
     type_name
     : VOID          { :void }
@@ -118,16 +118,15 @@ class Scanner
     | DOUBLE        { :float }
 
     declarator
-    : IDENTIFIER                            { val[0] }
-    | IDENTIFIER '(' parameter_list ')'     { "#{val[0]}(#{val[2]})" }
-    | IDENTIFIER '(' ')'                    { "#{val[0]}()" }
+    : IDENTIFIER '(' parameter_list ')'             { { id: val[0], args: val[2] } }
+    | IDENTIFIER '(' ')'                            { { id: val[0] } }
 
     parameter_list
-    : parameter_declaration
-    | parameter_list ',' parameter_declaration
+    : parameter_declaration                         { [ val[0] ] }
+    | parameter_list ',' parameter_declaration      { val[0].push(val[2]) }
 
     parameter_declaration
-    : type_name declarator
+    : type_name IDENTIFIER                          { { type: val[0], id: val[1] } }
 
     statement
     : declaration
@@ -193,7 +192,7 @@ require_relative '../core/core'
 ---- inner ----
 
 def initialize
-    @scope = @scope = Scope.new(IdentifierTable.new, nil)
+    @scope = Scope.new(IdentifierTable.new, nil, nil)
 end
 
 def on_error(t, val, vstack)

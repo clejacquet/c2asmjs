@@ -1,12 +1,12 @@
 class Return
   def initialize(expr = nil)
-    @expr = expr
+    @value = expr
   end
 
   def code(scope)
     scope.set_ret_done
-    if not @expr.nil?
-      expr_code, expr_reg, expr_type = @expr.code(scope)
+    if not @value.nil?
+      expr_code, expr_reg, expr_type = @value.code(scope)
 
       conversion_code = ''
       if scope.return_type != expr_type

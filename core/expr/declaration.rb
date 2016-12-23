@@ -1,15 +1,13 @@
 class Declaration
-  def initialize(type, declarator_list, lineno, expr = nil)
+  def initialize(type, declarator_list, mode = nil, value = nil)
     @declarator_list = declarator_list
     @type = type
-    @expr = expr
-    @lineno = lineno
+    @mode = mode
+    @value = value
   end
 
   def code(scope)
-    @declarator_list.each { |id| scope.id_table.add_id(id, @type, @lineno) }
-
-    if @expr.nil?
+    if @mode.nil?
       code_no_expr(scope)
     else
       code_expr(scope)
@@ -20,16 +18,24 @@ class Declaration
 
   def code_no_expr(scope)
     @declarator_list.reduce('') do |acc, id|
-      reg = scope.new_register_var(id)
+      reg = scope.var_name(scope.new_id(id, @type))
       acc + allocation(reg)
     end
   end
 
   def code_expr(scope)
-    expr_code, expr_reg, expr_type = @expr.code(scope)
+    if @mode == :expr
+      expr_code, expr_reg, expr_type = @value.code(scope)
+    elsif @mode == :reg
+      expr_code = ''
+      expr_reg = @value[:reg]
+      expr_type = @value[:type]
+    else
+      raise StandardError("Not a valid mode '#{@mode.to_s}'")
+    end
 
     alloc_code = @declarator_list.reduce('') do |acc, id|
-      reg = scope.new_register_var(id)
+      reg = scope.var_name(scope.new_id(id, @type))
       conversion_code, expr_reg = Type.build_conversion(expr_type, @type, expr_reg, scope)
       acc + allocation(reg) + conversion_code + store(reg, expr_reg)
     end
