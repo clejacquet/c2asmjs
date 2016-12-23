@@ -1,7 +1,7 @@
 require_relative('../type')
-require_relative('../scope')
+require_relative('../inner_scope')
 require_relative('../identifier_table')
-require_relative('declaration')
+require_relative('inner_declaration')
 
 class Function
   def initialize(type, decl, statements)
@@ -17,22 +17,22 @@ class Function
     end
   end
 
-  def code(scope)
-    scope.new_function(@id, @type, @args.map { |arg| arg[:type] })
-    @scope = Scope.new(IdentifierTable.new, @type, scope)
+  def code(gscope)
+    gscope.new_id(@id, { return: @type, args: @args.map { |arg| arg[:type] }})
+    @scope = InnerScope.new(IdentifierTable.new, @type, gscope)
 
     arg_regs = @args.map do |arg|
-      { type: arg[:type], reg: @scope.arg_name(arg[:id]), id: arg[:id] }
+      { type: arg[:type], reg: id_to_arg_name(@scope, arg[:id]), id: arg[:id] }
     end
 
     arg_declarations = arg_regs.map do |arg|
-      Declaration.new(arg[:type], [arg[:id]], :reg, arg)
+      InnerDeclaration.new(arg[:type], [arg[:id]], :reg, arg)
     end
 
     statements = arg_declarations.concat(@statements)
 
     args_str = arg_regs.map do |arg|
-      "#{Type.to_llvm(arg[:type])} %#{arg[:reg]}"
+      "#{Type.to_llvm(arg[:type])} #{arg[:reg]}"
     end.join(', ')
 
 
@@ -41,5 +41,11 @@ class Function
     statement_code += return_code
 
     "define #{Type.to_llvm(@type)} @#{@id}(#{args_str}) {\n#{statement_code}}\n\n"
+  end
+
+  private
+
+  def id_to_arg_name(scope, id)
+    "%a#{scope.object_id}_#{id}"
   end
 end

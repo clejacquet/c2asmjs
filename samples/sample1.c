@@ -1,12 +1,15 @@
-double coucou(int a, int b) {
-    return a + b;
+int g = 3;
+double h = 20.2;
+
+int coucou() {
+    return g;
 }
 
 int test() {
-    int b = 8;
-    return b;
+    int g = 2;
+    return g;
 }
 
 int main() {
-    return coucou(test(), 6) + test();
+    return test();
 }

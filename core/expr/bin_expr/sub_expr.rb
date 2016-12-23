@@ -10,4 +10,8 @@ class SubExpr < BinExpr
   def sym
     '-'
   end
+
+  def eval_calc(val1, val2)
+    val1 - val2
+  end
 end

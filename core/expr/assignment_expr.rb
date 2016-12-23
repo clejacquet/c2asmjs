@@ -1,15 +1,20 @@
 class AssignmentExpr
   def initialize(id, expr)
     @id = id
-    @value = expr
+    @expr = expr
   end
 
   def code(scope)
     #TODO VERIF DES TYPES
-    expr_code, expr_reg, expr_type = @value.code(scope)
+    expr_code, expr_reg, expr_type = @expr.code(scope)
 
-    reg, type = scope.get_id(@id)
+    type = scope.get_type(@id)
+    var = scope.get_name(@id)
     llvm_type = Type.to_llvm(type)
-    return "#{expr_code}store #{llvm_type} %#{expr_reg}, #{llvm_type}* %#{reg}\n", expr_reg, expr_type
+    return "#{expr_code}store #{llvm_type} %#{expr_reg}, #{llvm_type}* #{var}\n", expr_reg, expr_type
+  end
+
+  def try_eval
+    raise StandardError('Cannot eval assignment at compilation time')
   end
 end
