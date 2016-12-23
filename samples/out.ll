@@ -7,9 +7,8 @@ ret i32 %1
 
 define i32 @test() {
 %1 = add i32 0, 2
-%v12623420_g = alloca i32
-store i32 %1, i32* %v12623420_g
-%2 = load i32, i32* %v12623420_g
+store i32 %1, i32* @g
+%2 = load i32, i32* @g
 ret i32 %2
 }
 

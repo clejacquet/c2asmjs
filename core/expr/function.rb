@@ -35,12 +35,18 @@ class Function
       "#{Type.to_llvm(arg[:type])} #{arg[:reg]}"
     end.join(', ')
 
+    statements_code = statements.reduce('') do |acc, statement|
+      statement_code = statement.code(@scope)
+      if statement_code.is_a? Array
+        statement_code = statement_code[0]
+      end
+      acc + statement_code
+    end
 
-    statement_code = statements.reduce('') { |acc, statement| acc + statement.code(@scope) }
     return_code = (not @scope.ret_done?) ? "ret void\n" : ''
-    statement_code += return_code
+    statements_code += return_code
 
-    "define #{Type.to_llvm(@type)} @#{@id}(#{args_str}) {\n#{statement_code}}\n\n"
+    "define #{Type.to_llvm(@type)} @#{@id}(#{args_str}) {\n#{statements_code}}\n\n"
   end
 
   private
