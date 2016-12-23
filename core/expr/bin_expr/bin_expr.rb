@@ -11,7 +11,7 @@ class BinExpr
     conversion_code = ''
     type = expr1_type
     if expr1_type != expr2_type
-      type = Type.io_conversion_types(expr1_type, expr2_type, sym)
+      type = Type.output_type(expr1_type, expr2_type, sym)
 
       if type == expr2_type
         conversion_code, expr1_reg = Type.build_conversion(expr1_type, expr2_type, expr1_reg, scope)
