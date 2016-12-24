@@ -26,10 +26,17 @@ class InnerDeclaration
   def code_expr(scope)
     if @mode == :expr
       expr_type = @value.type(scope)
-      expr_code, expr_reg = @value.code(scope)
+
+      # OPTIMIZATION
+      begin
+        expr_val = @value.try_eval
+        expr_code = ''
+      rescue Exception
+        expr_code, expr_val = @value.code(scope)
+      end
     elsif @mode == :reg
       expr_code = ''
-      expr_reg = @value[:reg]
+      expr_val = @value[:reg]
       expr_type = @value[:type]
     else
       raise StandardError("Not a valid mode '#{@mode.to_s}'")
@@ -37,8 +44,8 @@ class InnerDeclaration
 
     alloc_code = @declarator_list.reduce('') do |acc, id|
       reg = scope.get_name(scope.new_id(id, @type))
-      conversion_code, expr_reg = Type.build_conversion(expr_type, @type, expr_reg, scope)
-      acc + allocation(reg) + conversion_code + store(reg, expr_reg)
+      conversion_code, expr_val = Type.build_conversion(expr_type, @type, expr_val, scope)
+      acc + allocation(reg) + conversion_code + store(reg, expr_val)
     end
 
     expr_code + alloc_code

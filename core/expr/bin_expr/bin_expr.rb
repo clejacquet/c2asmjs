@@ -11,11 +11,14 @@ class BinExpr
     # OPTIMIZATION
     begin
       expr1_val = Type.val_to_llvm(expr1_type, @expr1.try_eval)
-      expr2_val = Type.val_to_llvm(expr2_type, @expr2.try_eval)
-
-      expr1_code = expr2_code = ''
+      expr1_code = ''
     rescue Exception
       expr1_code, expr1_val = @expr1.code(scope)
+    end
+    begin
+      expr2_val = Type.val_to_llvm(expr2_type, @expr2.try_eval)
+      expr2_code = ''
+    rescue Exception
       expr2_code, expr2_val = @expr2.code(scope)
     end
 
