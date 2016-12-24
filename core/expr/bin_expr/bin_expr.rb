@@ -9,20 +9,20 @@ class BinExpr
     expr2_code, expr2_reg, expr2_type = @expr2.code(scope)
 
     conversion_code = ''
-    type = expr1_type
+    dominant_type = Type.dominant_type(expr1_type, expr2_type, sym)
     if expr1_type != expr2_type
-      type = Type.output_type(expr1_type, expr2_type, sym)
-
-      if type == expr2_type
+      if dominant_type == expr2_type
         conversion_code, expr1_reg = Type.build_conversion(expr1_type, expr2_type, expr1_reg, scope)
       else
         conversion_code, expr2_reg = Type.build_conversion(expr2_type, expr1_type, expr2_reg, scope)
       end
     end
 
+    type = Type.output_type(dominant_type, sym)
+
     reg = scope.new_register
     prefix = expr1_code + expr2_code + conversion_code
-    return prefix + "#{reg} = #{op(type)} #{Type.to_llvm(type)} #{expr1_reg}, #{expr2_reg}\n", reg, type
+    return prefix + "#{reg} = #{op(type)} #{Type.to_llvm(dominant_type)} #{expr1_reg}, #{expr2_reg}\n", reg, type
   end
 
   def try_eval

@@ -1,16 +1,8 @@
-int g = 3;
-double h = 20.2;
-
-int coucou() {
-    return h;
-}
-
 int test() {
-    g = 25 - h;
+    int g = 5 + 10;
     return g;
 }
 
 int main() {
-    test();
-    return g;
+    return test();
 }

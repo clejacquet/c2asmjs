@@ -1,107 +1,6 @@
 module Type
 
   ##
-  # Types handled.
-  # "llvm" => refer to the equivalent llvm type name
-  # "policy" => lambda function that checks whether a value can be interpreted as the parent type
-  # "to_str" => lambda function that converts a value to a string in the llvm equivalent parent type format
-  TYPES = {
-      integer: {
-          llvm: 'i32',
-          policy: lambda { |value| value.respond_to? :to_i },
-          to_str: lambda { |value| value.to_s }
-      },
-      float: {
-          llvm: 'double',
-          policy: lambda { |value| value.respond_to? :to_f },
-          to_str: lambda { |value| '%e' %value }
-      },
-      void: {
-          llvm: 'void',
-          policy: lambda { |value| raise StandardError("On void.policy: Void cannot have a value #{value}") },
-          to_str: lambda { |value| raise StandardError("On void.to_str: Void cannot have a value #{value}") },
-      }
-  }
-
-  ##
-  # Operators handled.
-  # For each operator, a list of its types compatible, with the llvm operation name corresponding, is provided
-  OPERATORS = {
-      '+': {
-          integer: 'add',
-          float: 'fadd'
-      },
-      '-': {
-          integer: 'sub',
-          float: 'fsub'
-      },
-      '*': {
-          integer: 'mul',
-          float: 'fmul'
-      },
-      '/': {
-          integer: 'sdiv',
-          float: 'fdiv'
-      },
-      REM: {
-          integer: 'srem',
-          float: 'frem'
-      },
-      '<': {
-          integer: 'icmp slt',
-          float: 'fcmp slt'
-      },
-      '>': {
-          integer: 'icmp sgt',
-          float: 'fcmp sgt'
-      },
-      LE_OP: {
-          integer: 'icmp sle',
-          float: 'fcmp sle'
-      },
-      GE_OP: {
-          integer: 'icmp sge',
-          float: 'fcmp sge'
-      },
-      EQ_OP: {
-          integer: 'icmp eq',
-          float: 'fcmp eq'
-      },
-      NE_OP: {
-          integer: 'icmp ne',
-          float: 'fcmp ne'
-      }
-  }
-
-  ##
-  # Provides, for a couple of types and for each operator, what is the corresponding output type.
-  # If a provided operator is not found, :default operator is used instead.
-  OUTPUT_TYPES = {
-      integer: {
-          float: {
-              default: :float
-          }
-      },
-
-      float: {
-          integer: {
-              default: :float
-          }
-      }
-  }
-
-  ##
-  # Provides, for a source type and a destination type, what is the llvm conversion operation.
-  CONVERSION_OPERATORS = {
-      integer: {
-          float: 'sitofp'
-      },
-      float: {
-          integer: 'fptosi'
-      }
-  }
-
-  ##
   # Provided a +value+ and a +type+, returns if the +value+ can be interpreted as the +type+
   def Type.is_value_of_type?(value, type)
     TYPES[type][:policy].call value
@@ -122,16 +21,22 @@ module Type
   ##
   # Provided a +op+ (operation symbol) and a +type+, returns the corresponding llvm operation name
   def Type.to_llvm_op(op, type)
-    OPERATORS[op.to_sym][type]
+    OPERATORS_TO_LLVM[op.to_sym][type]
   end
 
   ##
-  # Provided two types +type1+ and +type2+, returns the output type when used with +op+ binary operation
-  def Type.output_type(type1, type2, op)
-    output_types = OUTPUT_TYPES[type1][type2]
+  # Provided a +type+, returns the output type when used with +op+ operation
+  def Type.output_type(type, op)
+    OPERATORS_OUTPUT_TYPE[op.to_sym][type]
+  end
 
-    if not output_types[op].nil?
-      return output_types[op]
+  ##
+  # Provided two types +type1+ and +type2+, returns the dominant type when used with +op+ binary operation
+  def Type.dominant_type(type1, type2, op)
+    output_types = DOMINATION_TYPE_LINKS[type1][type2]
+
+    if not output_types[op.to_sym].nil?
+      return output_types[op.to_sym]
     else
       return output_types[:default]
     end
@@ -160,4 +65,211 @@ module Type
     end
     return '', current_reg
   end
+
+  ##
+  # Types handled.
+  # "llvm" => refer to the equivalent llvm type name
+  # "policy" => lambda function that checks whether a value can be interpreted as the parent type
+  # "to_str" => lambda function that converts a value to a string in the llvm equivalent parent type format
+  TYPES = {
+      integer: {
+          llvm: 'i32',
+          policy: lambda { |value| value.respond_to? :to_i },
+          to_str: lambda { |value| value.to_s }
+      },
+      float: {
+          llvm: 'double',
+          policy: lambda { |value| value.respond_to? :to_f },
+          to_str: lambda { |value| '%e' %value }
+      },
+      boolean: {
+          llvm: 'i1',
+          policy: lambda { |value| value.respond_to? :to_i and (value.to_i == 0 or value.to_i == 1) },
+          to_str: lambda { |value| value.to_s }
+      },
+      void: {
+          llvm: 'void',
+          policy: lambda { |value| raise StandardError("On void.policy: Void cannot have a value #{value}") },
+          to_str: lambda { |value| raise StandardError("On void.to_str: Void cannot have a value #{value}") },
+      }
+  }
+
+  ##
+  # Operators to LLVM operation mapping.
+  # For each operator, a list of its compatible types is provided with the llvm operation name corresponding.
+  OPERATORS_TO_LLVM = {
+      '+': {
+          boolean: 'add',
+          integer: 'add',
+          float: 'fadd'
+      },
+      '-': {
+          boolean: 'sub',
+          integer: 'sub',
+          float: 'fsub'
+      },
+      '*': {
+          boolean: 'mul',
+          integer: 'mul',
+          float: 'fmul'
+      },
+      '/': {
+          boolean: 'sdiv',
+          integer: 'sdiv',
+          float: 'fdiv'
+      },
+      REM: {
+          boolean: 'srem',
+          integer: 'srem',
+          float: 'frem'
+      },
+      '<': {
+          boolean: 'icmp slt',
+          integer: 'icmp slt',
+          float: 'fcmp slt'
+      },
+      '>': {
+          boolean: 'icmp sgt',
+          integer: 'icmp sgt',
+          float: 'fcmp sgt'
+      },
+      LE_OP: {
+          boolean: 'icmp sle',
+          integer: 'icmp sle',
+          float: 'fcmp sle'
+      },
+      GE_OP: {
+          boolean: 'icmp sge',
+          integer: 'icmp sge',
+          float: 'fcmp sge'
+      },
+      EQ_OP: {
+          boolean: 'icmp eq',
+          integer: 'icmp eq',
+          float: 'fcmp eq'
+      },
+      NE_OP: {
+          boolean: 'icmp ne',
+          integer: 'icmp ne',
+          float: 'fcmp ne'
+      }
+  }
+
+  ##
+  # Operation output result type
+  # For each operator and each type, gives the output type of the operation given a set of value of the given type
+  # It assumes that each value of this set has the given type (i.e. that the conversion has already been made)
+  OPERATORS_OUTPUT_TYPE = {
+      '+': {
+          boolean: :boolean,
+          integer: :integer,
+          float: :float
+      },
+      '-': {
+          boolean: :boolean,
+          integer: :integer,
+          float: :float
+      },
+      '*': {
+          boolean: :boolean,
+          integer: :integer,
+          float: :float
+      },
+      '/': {
+          boolean: :boolean,
+          integer: :integer,
+          float: :float
+      },
+      REM: {
+          boolean: :boolean,
+          integer: :integer,
+          float: :float
+      },
+      '<': {
+          boolean: :boolean,
+          integer: :boolean,
+          float: :boolean
+      },
+      '>': {
+          boolean: :boolean,
+          integer: :boolean,
+          float: :boolean
+      },
+      LE_OP: {
+          boolean: :boolean,
+          integer: :boolean,
+          float: :boolean
+      },
+      GE_OP: {
+          boolean: :boolean,
+          integer: :boolean,
+          float: :boolean
+      },
+      EQ_OP: {
+          boolean: :boolean,
+          integer: :boolean,
+          float: :boolean
+      },
+      NE_OP: {
+          boolean: :boolean,
+          integer: :boolean,
+          float: :boolean
+      }
+  }
+
+  ##
+  # Provides, for a couple of types and for each operator, what is the corresponding dominant type.
+  # If a provided operator is not found, :default operator is used instead.
+  DOMINATION_TYPE_LINKS = {
+      integer: {
+          integer: {
+              default: :integer
+          },
+          float: {
+              default: :float
+          },
+          boolean: {
+              default: :integer
+          }
+      },
+      float: {
+          integer: {
+              default: :float
+          },
+          float: {
+              default: :float
+          },
+          boolean: {
+              default: :float
+          }
+      },
+      boolean: {
+          integer: {
+              default: :integer
+          },
+          float: {
+              default: :float
+          },
+          boolean: {
+              default: :boolean
+          }
+      }
+  }
+
+  ##
+  # Provides, for a source type and a destination type, what is the llvm conversion operation.
+  CONVERSION_OPERATORS = {
+      integer: {
+          float: 'sitofp',
+          boolean: 'zext'
+      },
+      float: {
+          integer: 'fptosi',
+          boolean: 'fptosi'
+      },
+      boolean: {
+          integer: 'zext',
+          float: 'sitofp'
+      }
+  }
 end
