@@ -6,13 +6,16 @@ class IdentifierExpr
   def code(scope)
     reg = scope.new_register
 
-    type = scope.get_type(@id)
     var = scope.get_name(@id)
-    llvm_type = Type.to_llvm(type)
-    return "#{reg} = load #{llvm_type}, #{llvm_type}* #{var}\n", reg, type
+    llvm_type = Type.to_llvm(type(scope))
+    return "#{reg} = load #{llvm_type}, #{llvm_type}* #{var}\n", reg
   end
 
   def try_eval
     raise StandardError('Cannot eval an identifier at compilation time')
+  end
+
+  def type(scope)
+    scope.get_type(@id)
   end
 end

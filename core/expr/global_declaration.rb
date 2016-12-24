@@ -9,9 +9,9 @@ class GlobalDeclaration
     @declarator_list.reduce('') do |acc, id|
       reg = gscope.get_name(gscope.new_id(id, @type))
       if not @expr.nil?
-        acc + "#{reg} = global #{Type.to_llvm(@type)} #{Type.val_to_llvm(@type, @expr.try_eval)}\n"
+        acc + "#{reg} = global #{Type.to_llvm(@type)} #{Type.val_to_llvm(@type, @expr.try_eval)}\n\n"
       else
-        acc + "#{reg} = common global #{Type.to_llvm(@type)} #{Type.val_to_llvm(@type, 0)}\n"
+        acc + "#{reg} = common global #{Type.to_llvm(@type)} #{Type.val_to_llvm(@type, 0)}\n\n"
       end
     end
   end

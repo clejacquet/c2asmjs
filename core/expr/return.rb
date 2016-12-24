@@ -6,7 +6,8 @@ class Return
   def code(scope)
     scope.set_ret_done
     if not @value.nil?
-      expr_code, expr_reg, expr_type = @value.code(scope)
+      expr_type = @value.type(scope)
+      expr_code, expr_reg = @value.code(scope)
 
       conversion_code = ''
       if scope.return_type != expr_type

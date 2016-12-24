@@ -5,7 +5,8 @@ class AssignmentExpr
   end
 
   def code(scope)
-    expr_code, expr_reg, expr_type = @expr.code(scope)
+    expr_type = @expr.type(scope)
+    expr_code, expr_reg = @expr.code(scope)
 
     type = scope.get_type(@id)
     var = scope.get_name(@id)
@@ -13,10 +14,14 @@ class AssignmentExpr
 
     conversion_code, expr_reg = Type.build_conversion(expr_type, type, expr_reg, scope)
 
-    return "#{expr_code}#{conversion_code}store #{llvm_type} #{expr_reg}, #{llvm_type}* #{var}\n", expr_reg, expr_type
+    return "#{expr_code}#{conversion_code}store #{llvm_type} #{expr_reg}, #{llvm_type}* #{var}\n", expr_reg
   end
 
   def try_eval
     raise StandardError('Cannot eval assignment at compilation time')
+  end
+
+  def type(scope)
+    @expr.type(scope)
   end
 end

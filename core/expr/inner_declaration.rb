@@ -25,7 +25,8 @@ class InnerDeclaration
 
   def code_expr(scope)
     if @mode == :expr
-      expr_code, expr_reg, expr_type = @value.code(scope)
+      expr_type = @value.type(scope)
+      expr_code, expr_reg = @value.code(scope)
     elsif @mode == :reg
       expr_code = ''
       expr_reg = @value[:reg]

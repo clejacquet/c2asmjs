@@ -14,7 +14,8 @@ class FunctionCallExpr
 
     @args.each_index do |arg_id|
       arg_type = args_type[arg_id]
-      arg_expr_code, arg_expr_reg, arg_expr_type = @args[arg_id].code(scope)
+      arg_expr_type = @args[arg_id].type(scope)
+      arg_expr_code, arg_expr_reg = @args[arg_id].code(scope)
 
 =begin ONLY ON STRICT TYPE CONVERSION MODE
       unless arg_type == arg_expr_type
@@ -33,10 +34,14 @@ class FunctionCallExpr
     expr_code = arg_expr_codes.join
     arg_code = arg_final_exprs.join(', ')
     llvm_return_type = Type.to_llvm(return_type)
-    return "#{expr_code}#{reg} = call #{llvm_return_type} @#{@id}(#{arg_code})\n", reg, return_type
+    return "#{expr_code}#{reg} = call #{llvm_return_type} @#{@id}(#{arg_code})\n", reg
   end
 
   def try_eval
     raise StandardError('Cannot eval a function call at compilation time')
+  end
+
+  def type(scope)
+    scope.get_type(@id)[:return]
   end
 end
