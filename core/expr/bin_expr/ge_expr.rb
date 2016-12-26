@@ -10,4 +10,8 @@ class GeExpr < BinExpr
   def sym
     :GE_OP
   end
+
+  def eval_calc(val1, val2)
+    (val1 >= val2) ? 1 : 0
+  end
 end

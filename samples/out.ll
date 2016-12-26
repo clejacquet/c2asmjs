@@ -1,14 +1,10 @@
-@g = global i32 2
-
-define i32 @test() {
-%v14905600_g = alloca i32
-store i32 27, i32* %v14905600_g
-%1 = load i32, i32* %v14905600_g
-ret i32 %1
-}
-
 define i32 @main() {
-%1 = call i32 @test()
-ret i32 %1
+%v6780040_x = alloca i32
+store i32 0, i32* %v6780040_x
+%1 = load i32, i32* %v6780040_x
+%2 = sitofp i32 %1 to double
+%3 = fcmp oge double %2, 5.000000e-01
+%4 = zext i1 %3 to i32
+ret i32 %4
 }
 
