@@ -2,18 +2,24 @@ require_relative('scope')
 
 class InnerScope < Scope
   attr_reader :return_type
+  attr_reader :last_br
 
   def initialize(id_table, return_type, next_scope)
     super(id_table)
 
     @ret_done = false
     @register_count = 0
+    @last_br = '%0'
     @return_type = return_type
     @next_scope = next_scope
   end
 
-  def new_register
-    "%#{@register_count += 1}"
+  def new_register(str_mode = true)
+    if str_mode
+      "%#{@register_count += 1}"
+    else
+      @register_count += 1
+    end
   end
 
   def ret_done?
@@ -22,6 +28,10 @@ class InnerScope < Scope
 
   def set_ret_done
     @ret_done = true
+  end
+
+  def set_last_br(label)
+    @last_br = label
   end
 
   def get_type(id)

@@ -158,6 +158,11 @@ module Type
           boolean: 'icmp ne',
           integer: 'icmp ne',
           float: 'fcmp one'
+      },
+      AND: {
+          boolean: 'icmp ne',
+          integer: 'icmp ne',
+          float: 'fcmp one'
       }
   }
 
@@ -217,6 +222,11 @@ module Type
           float: :boolean
       },
       NE_OP: {
+          boolean: :boolean,
+          integer: :boolean,
+          float: :boolean
+      },
+      AND: {
           boolean: :boolean,
           integer: :boolean,
           float: :boolean

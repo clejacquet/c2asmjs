@@ -17,13 +17,6 @@ class FunctionCallExpr
       arg_expr_type = @args[arg_id].type(scope)
       arg_expr_code, arg_expr_reg = @args[arg_id].code(scope)
 
-=begin ONLY ON STRICT TYPE CONVERSION MODE
-      unless arg_type == arg_expr_type
-        msg = "Argument ##{arg_id} doesn't have a correct type (#{arg_type} expected, #{arg_expr_type} provided)"
-        raise StandardError(msg)
-      end
-=end
-
       arg_conversion_code, arg_expr_reg = Type.build_conversion(arg_expr_type, arg_type, arg_expr_reg, scope)
 
       arg_expr_codes.push(arg_expr_code + arg_conversion_code)

@@ -22,9 +22,9 @@ class BinExpr
       end
     end
 
-    reg = scope.new_register
     prefix = expr1_code + expr2_code + conversion_code
-    return prefix + "#{reg} = #{op(dominant_type)} #{Type.to_llvm(dominant_type)} #{expr1_val}, #{expr2_val}\n", reg
+    llvm_code, reg = build_code(dominant_type, op(dominant_type), expr1_val, expr2_val, scope)
+    return prefix + llvm_code, reg
   end
 
   def try_eval
@@ -33,6 +33,13 @@ class BinExpr
 
   def type(scope)
     Type.output_type(Type.dominant_type(@expr1.type(scope), @expr2.type(scope), sym), sym)
+  end
+
+  protected
+
+  def build_code(dominant_type, op, expr1_val, expr2_val, scope)
+    reg = scope.new_register
+    return "#{reg} = #{op} #{Type.to_llvm(dominant_type)} #{expr1_val}, #{expr2_val}\n", reg
   end
 
   private
@@ -44,10 +51,11 @@ class BinExpr
         expr_val = Type.convert(expr_type, dominant_type, expr_val)
         expr_type = dominant_type
       end
+      expr_val = Type.val_to_llvm(expr_type, expr_val)
       expr_code = ''
     rescue Exception
       expr_code, expr_val = expr.code(scope)
     end
-    return expr_code, expr_type, Type.val_to_llvm(expr_type, expr_val)
+    return expr_code, expr_type, expr_val
   end
 end

@@ -14,6 +14,7 @@ class Return
           expr_val = Type.convert(expr_type, scope.return_type, expr_val)
           expr_type = scope.return_type
         end
+        expr_val = Type.val_to_llvm(expr_type, expr_val)
         expr_code = ''
       rescue Exception
         expr_code, expr_val = @value.code(scope)
