@@ -8,7 +8,7 @@ class IdentifierExpr
 
     var = scope.get_name(@id)
     llvm_type = Type.to_llvm(type(scope))
-    return "#{reg} = load #{llvm_type}, #{llvm_type}* #{var}\n", reg
+    return "  #{reg} = load #{llvm_type}, #{llvm_type}* #{var}\n", reg
   end
 
   def try_eval

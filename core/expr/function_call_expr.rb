@@ -27,7 +27,7 @@ class FunctionCallExpr
     expr_code = arg_expr_codes.join
     arg_code = arg_final_exprs.join(', ')
     llvm_return_type = Type.to_llvm(return_type)
-    return "#{expr_code}#{reg} = call #{llvm_return_type} @#{@id}(#{arg_code})\n", reg
+    return "#{expr_code}  #{reg} = call #{llvm_return_type} @#{@id}(#{arg_code})\n", reg
   end
 
   def try_eval

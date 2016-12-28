@@ -17,18 +17,18 @@ class AndExpr < BinExpr
     cmp1, cmp1_reg = super(dominant_type, cmp_op, '0', expr1_val, scope)
 
     label1_reg = scope.new_register(false)
-    label1 = "; <label>:#{label1_reg}\n"
+    label1 = "\n; <label>:#{label1_reg}\n"
 
     cmp2, cmp2_reg = super(dominant_type, cmp_op, '0', expr2_val, scope)
 
     label2_reg = scope.new_register(false)
-    label2 = "; <label>:#{label2_reg}\n"
+    label2 = "\n; <label>:#{label2_reg}\n"
 
     res_reg = scope.new_register
-    res = "#{res_reg} = phi #{Type.to_llvm(type(scope))} [false, #{scope.last_br}], [#{cmp2_reg}, %#{label1_reg}]\n"
+    res = "  #{res_reg} = phi #{Type.to_llvm(type(scope))} [false, #{scope.last_br}], [#{cmp2_reg}, %#{label1_reg}]\n"
 
-    br1 = "br #{Type.to_llvm(type(scope))} #{cmp1_reg}, label %#{label1_reg}, label %#{label2_reg}\n"
-    br2 = "br label %#{label2_reg}\n"
+    br1 = "  br #{Type.to_llvm(type(scope))} #{cmp1_reg}, label %#{label1_reg}, label %#{label2_reg}\n"
+    br2 = "  br label %#{label2_reg}\n"
 
     scope.set_last_br("%#{label2_reg}")
 
@@ -37,6 +37,6 @@ class AndExpr < BinExpr
   end
 
   def eval_calc(val1, val2)
-    val1 && val2
+    val1 and val2
   end
 end

@@ -9,7 +9,7 @@ class ConstantExpr
     initializer = Type.val_to_llvm(inner_type, 0)
     llvm_val = Type.val_to_llvm(inner_type, @val)
 
-    return "#{reg} = #{op} #{llvm_type} #{initializer}, #{llvm_val}\n", reg
+    return "  #{reg} = #{op} #{llvm_type} #{initializer}, #{llvm_val}\n", reg
   end
 
   def try_eval

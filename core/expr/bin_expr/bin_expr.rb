@@ -39,7 +39,7 @@ class BinExpr
 
   def build_code(dominant_type, op, expr1_val, expr2_val, scope)
     reg = scope.new_register
-    return "#{reg} = #{op} #{Type.to_llvm(dominant_type)} #{expr1_val}, #{expr2_val}\n", reg
+    return "  #{reg} = #{op} #{Type.to_llvm(dominant_type)} #{expr1_val}, #{expr2_val}\n", reg
   end
 
   private

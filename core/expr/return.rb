@@ -25,7 +25,7 @@ class Return
         conversion_code, expr_val = Type.build_conversion(expr_type, scope.return_type, expr_val, scope)
       end
 
-      "#{expr_code}#{conversion_code}ret #{Type.to_llvm(scope.return_type)} #{expr_val}\n"
+      "#{expr_code}#{conversion_code}  ret #{Type.to_llvm(scope.return_type)} #{expr_val}\n"
     else
       'ret void'
     end

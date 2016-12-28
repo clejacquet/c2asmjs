@@ -1,10 +1,9 @@
 int main() {
-    int a = 3;
-    int b = 4;
-    int c = a && b;
+    int a = 0;
+    int b = 1;
+    int c = 0;
 
-    int d = 2;
-    return c && d;
+    return a || b || c;
 }
 
 /*

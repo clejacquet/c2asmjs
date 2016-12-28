@@ -14,7 +14,7 @@ class AssignmentExpr
 
     conversion_code, expr_reg = Type.build_conversion(expr_type, type, expr_reg, scope)
 
-    return "#{expr_code}#{conversion_code}store #{llvm_type} #{expr_reg}, #{llvm_type}* #{var}\n", expr_reg
+    return "#{expr_code}#{conversion_code}  store #{llvm_type} #{expr_reg}, #{llvm_type}* #{var}\n", expr_reg
   end
 
   def try_eval

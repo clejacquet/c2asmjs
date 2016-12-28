@@ -53,11 +53,11 @@ class InnerDeclaration
 
   def allocation(reg)
     llvm_type = Type.to_llvm(@type)
-    "#{reg} = alloca #{llvm_type}\n"
+    "  #{reg} = alloca #{llvm_type}\n"
   end
 
   def store(reg, expr_reg)
     llvm_type = Type.to_llvm(@type)
-    "store #{llvm_type} #{expr_reg}, #{llvm_type}* #{reg}\n"
+    "  store #{llvm_type} #{expr_reg}, #{llvm_type}* #{reg}\n"
   end
 end
