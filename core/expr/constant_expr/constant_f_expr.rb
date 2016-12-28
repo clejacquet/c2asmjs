@@ -4,10 +4,10 @@ class ConstantFExpr < ConstantExpr
   protected
 
   def op
-    'fadd'
+    Type.to_llvm_op('+', inner_type)
   end
 
-  def type
+  def inner_type
     :float
   end
 end

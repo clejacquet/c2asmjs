@@ -43,6 +43,12 @@ module Type
   end
 
   ##
+  # Converts +val+ from +src_type+ to +dst_type+
+  def Type.convert(type_src, type_dst, val)
+    CONVERSION_FUNCTIONS[type_src][type_dst].call val
+  end
+
+  ##
   # Build a llvm conversion instruction to converts +val+ from +src_type+ to +dst_type+
   # +val+ can be either a constant value, or a register (starting with "%")
   def Type.llvm_conversion_instruction(src_type, dst_type, val)
@@ -55,15 +61,15 @@ module Type
   end
 
   ##
-  # Build a llvm conversion instruction to converts +current_reg+ (a register) from +src_type+ to +dst_type+ and
+  # Build a llvm conversion instruction to converts +val+ from +src_type+ to +dst_type+ and
   # returns it with the new register storing the converted value if the +src_type+ is different from the +dst_type+.
-  # Otherwise, it just returns an empty instruction and the initial register (+current_reg+)
-  def Type.build_conversion(src_type, dst_type, current_reg, scope)
+  # Otherwise, it just returns an empty instruction and the initial register (+val+)
+  def Type.build_conversion(src_type, dst_type, val, scope)
     if dst_type != src_type
       new_reg = scope.new_register
-      return "#{new_reg} = #{Type.llvm_conversion_instruction(src_type, dst_type, current_reg)}\n", new_reg
+      return "  #{new_reg} = #{Type.llvm_conversion_instruction(src_type, dst_type, val)}\n", new_reg
     end
-    return '', current_reg
+    return '', val
   end
 
   ##
@@ -126,32 +132,32 @@ module Type
       '<': {
           boolean: 'icmp slt',
           integer: 'icmp slt',
-          float: 'fcmp slt'
+          float: 'fcmp olt'
       },
       '>': {
           boolean: 'icmp sgt',
           integer: 'icmp sgt',
-          float: 'fcmp sgt'
+          float: 'fcmp ogt'
       },
       LE_OP: {
           boolean: 'icmp sle',
           integer: 'icmp sle',
-          float: 'fcmp sle'
+          float: 'fcmp ole'
       },
       GE_OP: {
           boolean: 'icmp sge',
           integer: 'icmp sge',
-          float: 'fcmp sge'
+          float: 'fcmp oge'
       },
       EQ_OP: {
           boolean: 'icmp eq',
           integer: 'icmp eq',
-          float: 'fcmp eq'
+          float: 'fcmp oeq'
       },
       NE_OP: {
           boolean: 'icmp ne',
           integer: 'icmp ne',
-          float: 'fcmp ne'
+          float: 'fcmp one'
       },
       INC_OP: {
           boolean: 'add',
@@ -162,6 +168,16 @@ module Type
           boolean: 'sub',
           integer: 'sub',
           float: 'fsub'
+      },
+      AND: {
+          boolean: 'icmp ne',
+          integer: 'icmp ne',
+          float: 'fcmp one'
+      },
+      OR: {
+          boolean: 'icmp ne',
+          integer: 'icmp ne',
+          float: 'fcmp one'
       }
   }
 
@@ -224,6 +240,16 @@ module Type
           boolean: :boolean,
           integer: :boolean,
           float: :boolean
+      },
+      AND: {
+          boolean: :boolean,
+          integer: :boolean,
+          float: :boolean
+      },
+      OR: {
+          boolean: :boolean,
+          integer: :boolean,
+          float: :boolean
       }
   }
 
@@ -280,6 +306,23 @@ module Type
       boolean: {
           integer: 'zext',
           float: 'sitofp'
+      }
+  }
+
+  ##
+  # Provides functions to convert a value from a source type to a destination type
+  CONVERSION_FUNCTIONS = {
+      integer: {
+          float: lambda { |val| val },
+          boolean: lambda { |val| (val != 0) ? 1 : 0 }
+      },
+      float: {
+          integer: lambda { |val| val.floor },
+          boolean: lambda { |val| (val != 0) ? 1 : 0 }
+      },
+      boolean: {
+          integer: lambda { |val| val },
+          float: lambda { |val| val }
       }
   }
 end

@@ -1,13 +1,15 @@
 require_relative('../type')
-require_relative('../inner_scope')
+require_relative('../function_scope')
 require_relative('../identifier_table')
 require_relative('inner_declaration')
 
 class Function
-  def initialize(type, decl, statements)
+  attr_reader :type
+
+  def initialize(type, decl, compound_statement)
     @type = type
     @id = decl[:id]
-    @statements = statements
+    @compound_statement = compound_statement
 
     args = decl[:args]
     if args.nil?
@@ -19,31 +21,23 @@ class Function
 
   def code(gscope)
     gscope.new_id(@id, { return: @type, args: @args.map { |arg| arg[:type] }})
-    @scope = InnerScope.new(IdentifierTable.new, @type, gscope)
+    @scope = FunctionScope.new(IdentifierTable.new, gscope, self)
 
     arg_regs = @args.map do |arg|
       { type: arg[:type], reg: id_to_arg_name(@scope, arg[:id]), id: arg[:id] }
     end
 
     arg_declarations = arg_regs.map do |arg|
-      InnerDeclaration.new(arg[:type], [arg[:id]], :reg, arg)
-    end
-
-    statements = arg_declarations.concat(@statements)
+      InnerDeclaration.new(arg[:type], [arg[:id]], :reg, arg).code(@scope)
+    end.join
 
     args_str = arg_regs.map do |arg|
       "#{Type.to_llvm(arg[:type])} #{arg[:reg]}"
     end.join(', ')
 
-    statements_code = statements.reduce('') do |acc, statement|
-      statement_code = statement.code(@scope)
-      if statement_code.is_a? Array
-        statement_code = statement_code[0]
-      end
-      acc + statement_code
-    end
+    statements_code = arg_declarations + @compound_statement.code(@scope)
 
-    return_code = (not @scope.ret_done?) ? "ret void\n" : ''
+    return_code = (@scope.get_jump_done != :return) ? "ret void\n" : ''
     statements_code += return_code
 
     "define #{Type.to_llvm(@type)} @#{@id}(#{args_str}) {\n#{statements_code}}\n\n"

@@ -5,12 +5,18 @@ class ConstantExpr
 
   def code(scope)
     reg = scope.new_register
-    return "#{reg} = #{op} #{Type.to_llvm(type)} #{Type.val_to_llvm(type, 0)}, #{Type.val_to_llvm(type, @val)}\n",
-        reg,
-        type
+    llvm_type = Type.to_llvm(inner_type)
+    initializer = Type.val_to_llvm(inner_type, 0)
+    llvm_val = Type.val_to_llvm(inner_type, @val)
+
+    return "  #{reg} = #{op} #{llvm_type} #{initializer}, #{llvm_val}\n", reg
   end
 
   def try_eval
     @val
+  end
+
+  def type(scope)
+    inner_type
   end
 end

@@ -4,10 +4,10 @@ class ConstantIExpr < ConstantExpr
   protected
 
   def op
-    Type.to_llvm_op('+', type)
+    Type.to_llvm_op('+', inner_type)
   end
 
-  def type
+  def inner_type
     :integer
   end
 end
