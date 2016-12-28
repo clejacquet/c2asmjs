@@ -6,15 +6,15 @@ class AssignmentExpr
 
   def code(scope)
     expr_type = @expr.type(scope)
-    expr_code, expr_reg = @expr.code(scope)
+    expr_code, expr_val = @expr.code(scope)
 
     type = scope.get_type(@id)
     var = scope.get_name(@id)
     llvm_type = Type.to_llvm(type)
 
-    conversion_code, expr_reg = Type.build_conversion(expr_type, type, expr_reg, scope)
+    conversion_code, expr_val = Type.build_conversion(expr_type, type, expr_val, scope)
 
-    return "#{expr_code}#{conversion_code}  store #{llvm_type} #{expr_reg}, #{llvm_type}* #{var}\n", expr_reg
+    return "#{expr_code}#{conversion_code}  store #{llvm_type} #{expr_val}, #{llvm_type}* #{var}\n", expr_val
   end
 
   def try_eval

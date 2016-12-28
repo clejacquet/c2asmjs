@@ -61,15 +61,15 @@ module Type
   end
 
   ##
-  # Build a llvm conversion instruction to converts +current_reg+ (a register) from +src_type+ to +dst_type+ and
+  # Build a llvm conversion instruction to converts +val+ from +src_type+ to +dst_type+ and
   # returns it with the new register storing the converted value if the +src_type+ is different from the +dst_type+.
-  # Otherwise, it just returns an empty instruction and the initial register (+current_reg+)
-  def Type.build_conversion(src_type, dst_type, current_reg, scope)
+  # Otherwise, it just returns an empty instruction and the initial register (+val+)
+  def Type.build_conversion(src_type, dst_type, val, scope)
     if dst_type != src_type
       new_reg = scope.new_register
-      return "  #{new_reg} = #{Type.llvm_conversion_instruction(src_type, dst_type, current_reg)}\n", new_reg
+      return "  #{new_reg} = #{Type.llvm_conversion_instruction(src_type, dst_type, val)}\n", new_reg
     end
-    return '', current_reg
+    return '', val
   end
 
   ##

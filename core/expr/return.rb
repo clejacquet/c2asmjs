@@ -4,9 +4,11 @@ class Return
   end
 
   def code(scope)
-    scope.set_ret_done
+    scope.set_jump_done(:return)
+
     if not @value.nil?
       expr_type = @value.type(scope)
+      function_type = scope.get_function_type
 
       begin
         expr_val = @value.try_eval
@@ -21,11 +23,11 @@ class Return
       end
 
       conversion_code = ''
-      if scope.return_type != expr_type
-        conversion_code, expr_val = Type.build_conversion(expr_type, scope.return_type, expr_val, scope)
+      if function_type != expr_type
+        conversion_code, expr_val = Type.build_conversion(expr_type, function_type, expr_val, scope)
       end
 
-      "#{expr_code}#{conversion_code}  ret #{Type.to_llvm(scope.return_type)} #{expr_val}\n"
+      "#{expr_code}#{conversion_code}  ret #{Type.to_llvm(function_type)} #{expr_val}\n"
     else
       'ret void'
     end

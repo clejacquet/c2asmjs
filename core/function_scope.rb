@@ -1,41 +1,45 @@
 require_relative('scope')
 
-class InnerScope < Scope
-  def initialize(id_table, next_scope)
+class FunctionScope < Scope
+  def initialize(id_table, next_scope, function_handler)
     super(id_table)
 
     @register_count = 0
     @last_br = '%0'
     @next_scope = next_scope
-    @function_scope = next_scope.get_function_scope
+    @function_handler = function_handler
   end
 
   def new_register(str_mode = true)
-    @function_scope.new_register(str_mode)
+    if str_mode
+      "%#{@register_count += 1}"
+    else
+      @register_count += 1
+    end
   end
 
   def get_last_br
-    @function_scope.get_last_br
+    @last_br
   end
 
   def set_last_br(label)
-    @function_scope.set_last_br(label)
+    @last_br = label
   end
 
   def get_function_type
-    @function_scope.get_function_type
+    @function_handler.type
   end
 
   def get_jump_done
-    @function_scope.get_jump_done
+    @jump_done
   end
 
   def set_jump_done(jump)
-    @function_scope.set_jump_done(jump)
+    @jump_done = jump
   end
 
   def get_function_scope
-    @function_scope
+    self
   end
 
   def get_type(id)

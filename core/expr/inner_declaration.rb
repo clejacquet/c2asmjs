@@ -29,7 +29,7 @@ class InnerDeclaration
 
       # OPTIMIZATION
       begin
-        expr_val = @value.try_eval
+        expr_val = Type.val_to_llvm(expr_type, @value.try_eval)
         expr_code = ''
       rescue Exception
         expr_code, expr_val = @value.code(scope)
