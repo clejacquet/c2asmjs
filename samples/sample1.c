@@ -1,10 +1,14 @@
 int test() {
-    double b = 4.5;
-    int a = 5;
+    int a = 0;
 
-    if (1) {
-        if (a || b) {
-            a = b + 2;
+    if (a) {
+        a = 2;
+    } else {
+        int b = 2;
+        if (b && 4) {
+            a = 3;
+        } else {
+            a = 4;
         }
     }
 

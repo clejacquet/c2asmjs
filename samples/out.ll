@@ -1,40 +1,47 @@
 define i32 @test() {
-  %v13574620_b = alloca double
-  store double 4.500000e+00, double* %v13574620_b
-  %v13574620_a = alloca i32
-  store i32 5, i32* %v13574620_a
-  %1 = add i32 0, 1
-  %2 = icmp ne i32 1, 0
-  br i1 %2, label %3, label %17
+  %v6192780_a = alloca i32
+  store i32 0, i32* %v6192780_a
+  %1 = load i32, i32* %v6192780_a
+  %2 = load i32, i32* %v6192780_a
+  %3 = icmp ne i32 %2, 0
+  br i1 %3, label %4, label %6
 
-; <label>:3
-  %4 = load i32, i32* %v13574620_a
-  %5 = load double, double* %v13574620_b
-  %6 = sitofp i32 %4 to double
-  %7 = fcmp one double 0.000000e+00, %6
-  br i1 %7, label %10, label %8
+; <label>:4
+  %5 = add i32 0, 2
+  store i32 %5, i32* %v6192780_a
+  br label %18
 
-; <label>:8
-  %9 = fcmp one double 0.000000e+00, %5
-  br label %10
+; <label>:6
+  %v6190020_b = alloca i32
+  store i32 2, i32* %v6190020_b
+  %7 = load i32, i32* %v6190020_b
+  %8 = icmp ne i32 0, %7
+  br i1 %8, label %9, label %11
 
-; <label>:10
-  %11 = phi i1 [true, %3], [%9, %8]
-  br i1 %11, label %12, label %16
+; <label>:9
+  %10 = icmp ne i32 0, 4
+  br label %11
 
-; <label>:12
-  %13 = load double, double* %v13574620_b
-  %14 = fadd double %13, 2.000000e+00
-  %15 = fptosi double %14 to i32
-  store i32 %15, i32* %v13574620_a
-  br label %16
+; <label>:11
+  %12 = phi i1 [false, %6], [%10, %9]
+  br i1 %12, label %13, label %15
 
-; <label>:16
+; <label>:13
+  %14 = add i32 0, 3
+  store i32 %14, i32* %v6192780_a
+  br label %17
+
+; <label>:15
+  %16 = add i32 0, 4
+  store i32 %16, i32* %v6192780_a
   br label %17
 
 ; <label>:17
-  %18 = load i32, i32* %v13574620_a
-  ret i32 %18
+  br label %18
+
+; <label>:18
+  %19 = load i32, i32* %v6192780_a
+  ret i32 %19
 }
 
 define i32 @main() {
