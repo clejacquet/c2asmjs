@@ -14,8 +14,15 @@
 
     rake run[<filename>]
     
-For running **samples/sample1.txt**: `rake run[samples/sample1.txt]`
+For running **samples/sample1.c**: `rake run[samples/sample1.c]`
 
 ## Clean
 
     rake clean
+    
+## Evolutions possibles
+    Gestion d'opérations "dangereuses" à la compilation (générer un warning overflow, ...)
+    Extensions du langage (type bool <=> i1 en llvm)
+    
+    
+    
