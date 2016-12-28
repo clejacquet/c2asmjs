@@ -152,6 +152,16 @@ module Type
           boolean: 'icmp ne',
           integer: 'icmp ne',
           float: 'fcmp ne'
+      },
+      INC_OP: {
+          boolean: 'add',
+          integer: 'add',
+          float: 'fadd'
+      },
+      DEC_OP: {
+          boolean: 'sub',
+          integer: 'sub',
+          float: 'fsub'
       }
   }
 

@@ -53,8 +53,8 @@ class Scanner
 
     postfix_expression
     : primary_expression                                { val[0] }
-    | postfix_expression INC_OP                         { PostIncExpr.new(val[1]) }
-    | postfix_expression DEC_OP                         { PostDecExpr.new(val[1]) }
+    | postfix_expression INC_OP                         { PostIncExpr.new(val[0]) }
+    | postfix_expression DEC_OP                         { PostDecExpr.new(val[0]) }
 
     argument_expression_list
     : expression                                        { [ val[0] ] }
