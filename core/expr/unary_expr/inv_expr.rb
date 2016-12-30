@@ -3,28 +3,32 @@ require_relative('../bin_expr/ne_expr')
 require_relative('../constant_expr/constant_b_expr')
 
 class InvExpr < UnaryExpr
-  def code(scope)
-    expr_type = @expr.type(scope)
-    expr_code, expr_reg = @expr.code(scope)
+  def type(scope)
+    :boolean
+  end
 
-    code = expr_code
+  protected
 
-    ne_code, ne_reg = NeExpr.new(@expr, ConstantBExpr.new(0)).code(scope)
+  def build_code(type, op, expr_val, scope)
+    ne_expr = NeExpr.new(@expr, ConstantExpr.build_constant(type(scope), 0))
+    expr_code, expr_val = ne_expr.code(scope)
+    code, val = super(ne_expr.type(scope), op, expr_val, scope)
+    return expr_code + code, val
+  end
 
-    #if value == 0 (or 0.0), then xor(value, true) == 1
-    #if value != 0, xor(value, true) == 0
-    if expr_type == :integer
-      code += ne_reg
-           + "#{reg} = xor i1 #{reg}, true\n"
-           + "#{reg} = zext i1 %3 to i32\n"
-    else
-      code += "#{reg} = load float, float* #{expr_reg}\n"
-           + "#{reg} = fcmp sne float #{reg}, 0.000000e+00\n"
-           + "#{reg} = xor i1 #{reg}, true\n"
-           + "#{reg} = zext i1 %3 to i32\n"
-           + "#{reg} = sitofp i32 %4 to float" #cast back to float
-    end
+  def sym
+    '!'
+  end
 
-    return code, reg
+  def eval_calc(val)
+    (val == 0) ? 1 : 0
+  end
+
+  def extra_val
+    true
+  end
+
+  def first_arg?
+    false
   end
 end

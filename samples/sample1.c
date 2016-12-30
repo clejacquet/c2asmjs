@@ -1,9 +1,5 @@
-int test() {
-    int a = 2;
-    a++;
-    return a;
-}
-
 int main() {
-    return test() + 5;
+    int a = 0;
+    int b = 3;
+    return 2 + !0;
 }

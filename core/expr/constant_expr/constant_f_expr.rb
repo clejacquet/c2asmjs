@@ -1,6 +1,10 @@
 require_relative('constant_expr')
 
 class ConstantFExpr < ConstantExpr
+  def try_eval
+    @val
+  end
+
   protected
 
   def op
@@ -9,9 +13,5 @@ class ConstantFExpr < ConstantExpr
 
   def inner_type
     :float
-  end
-
-  def try_eval
-    @val
   end
 end

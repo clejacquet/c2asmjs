@@ -1,6 +1,10 @@
 require_relative('constant_expr')
 
 class ConstantBExpr < ConstantExpr
+  def try_eval
+    @val != 0
+  end
+
   protected
 
   def op
@@ -9,9 +13,5 @@ class ConstantBExpr < ConstantExpr
 
   def inner_type
     :boolean
-  end
-
-  def try_eval
-    @val != 0
   end
 end

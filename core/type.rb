@@ -81,7 +81,13 @@ module Type
       integer: {
           llvm: 'i32',
           policy: lambda { |value| value.respond_to? :to_i },
-          to_str: lambda { |value| value.to_s }
+          to_str: lambda do |value|
+            if not value.is_a? Numeric
+              (value) ? 1 : 0
+            else
+              value.to_s
+            end
+          end
       },
       float: {
           llvm: 'double',
@@ -90,8 +96,9 @@ module Type
       },
       boolean: {
           llvm: 'i1',
-          policy: lambda { |value| value.respond_to? :to_i and (value.to_i == 0 or value.to_i == 1) },
-          to_str: lambda { |value| value.to_s }
+          policy: lambda { |value| value == true or value == false or
+                                  (value.respond_to? :to_i and (value.to_i == 0 or value.to_i == 1)) },
+          to_str: lambda { |value| (value != 0 or value == true) ? 'true' : 'false' }
       },
       void: {
           llvm: 'void',
@@ -178,6 +185,11 @@ module Type
           boolean: 'icmp ne',
           integer: 'icmp ne',
           float: 'fcmp one'
+      },
+      '!': {
+          boolean: 'xor',
+          integer: 'xor',
+          float: 'xor'
       }
   }
 
@@ -247,6 +259,11 @@ module Type
           float: :boolean
       },
       OR: {
+          boolean: :boolean,
+          integer: :boolean,
+          float: :boolean
+      },
+      '!': {
           boolean: :boolean,
           integer: :boolean,
           float: :boolean

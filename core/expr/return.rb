@@ -12,13 +12,13 @@ class Return
 
       begin
         expr_val = @value.try_eval
-        if expr_type != scope.return_type
+        if expr_type != scope.get_function_type
           expr_val = Type.convert(expr_type, scope.return_type, expr_val)
-          expr_type = scope.return_type
+          expr_type = scope.get_function_type
         end
         expr_val = Type.val_to_llvm(expr_type, expr_val)
         expr_code = ''
-      rescue Exception
+      rescue Exception => e
         expr_code, expr_val = @value.code(scope)
       end
 

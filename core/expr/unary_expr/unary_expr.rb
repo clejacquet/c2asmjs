@@ -30,7 +30,6 @@ class UnaryExpr
       first_arg = "#{Type.val_to_llvm(type, extra_val)}, #{expr_val}"
     end
 
-    "#{reg} = #{Type.to_llvm_op(sym, type)} #{Type.to_llvm(type)} \n"
     return "  #{reg} = #{op} #{Type.to_llvm(type)} #{first_arg}\n", reg
   end
 
