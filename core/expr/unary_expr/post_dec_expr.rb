@@ -1,4 +1,5 @@
 require_relative('../identifier_expr')
+require_relative('../fake_expr')
 require_relative('../bin_expr/sub_expr')
 
 class PostDecExpr < IdentifierExpr
@@ -11,8 +12,11 @@ class PostDecExpr < IdentifierExpr
   def code(scope)
     constant_expr = ConstantExpr.build_constant(type(scope), 1)
 
+    expr_type = type(scope)
     expr_code, expr_val = super(scope)
-    assign_code = AssignmentExpr.new(@id, SubExpr.new(@expr, constant_expr)).code(scope)[0]
+    fake_expr = FakeExpr.new('', expr_val, expr_type)
+
+    assign_code = AssignmentExpr.new(@id, SubExpr.new(fake_expr, constant_expr)).code(scope)[0]
 
     return expr_code + assign_code, expr_val
   end

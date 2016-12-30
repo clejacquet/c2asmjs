@@ -57,7 +57,7 @@ class BinExpr
       end
       expr_val = Type.val_to_llvm(expr_type, expr_val)
       expr_code = ''
-    rescue Exception
+    rescue StandardError
       expr_code, expr_val = expr.code(scope)
     end
     return expr_code, expr_type, expr_val

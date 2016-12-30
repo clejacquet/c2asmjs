@@ -151,13 +151,13 @@ class Scanner
     : IF '(' expression ')' statement   =LOWER_THAN_ELSE                { IfStatement.new(val[2], val[4]) }
     | IF '(' expression ')' statement ELSE statement                    { IfStatement.new(val[2], val[4], val[6]) }
     | FOR '(' expression ';' expression ';' expression ')' statement    { ForStatement.new(val[2], val[4], val[6], val[8]) }
-    | FOR '(' expression ';' expression ';'            ')' statement
-    | FOR '(' expression ';'            ';' expression ')' statement
-    | FOR '(' expression ';'            ';'            ')' statement
-    | FOR '('            ';' expression ';' expression ')' statement
-    | FOR '('            ';' expression ';'            ')' statement
-    | FOR '('            ';'            ';' expression ')' statement
-    | FOR '('            ';'            ';'            ')' statement
+    | FOR '(' expression ';' expression ';'            ')' statement    { ForStatement.new(val[2], val[4], nil, val[7]) }
+    | FOR '(' expression ';'            ';' expression ')' statement    { ForStatement.new(val[2], nil, val[5], val[7]) }
+    | FOR '(' expression ';'            ';'            ')' statement    { ForStatement.new(val[2], nil, nil, val[6]) }
+    | FOR '('            ';' expression ';' expression ')' statement    { ForStatement.new(nil, val[3], val[5], val[7]) }
+    | FOR '('            ';' expression ';'            ')' statement    { ForStatement.new(nil, val[3], nil, val[6]) }
+    | FOR '('            ';'            ';' expression ')' statement    { ForStatement.new(nil, nil, val[4], val[6]) }
+    | FOR '('            ';'            ';'            ')' statement    { ForStatement.new(nil, nil, nil, val[5]) }
 
     iteration_statement
     : WHILE '(' expression ')' statement                { WhileStatement.new(val[2], val[4]) }

@@ -31,7 +31,7 @@ class InnerDeclaration
       begin
         expr_val = Type.val_to_llvm(expr_type, @value.try_eval)
         expr_code = ''
-      rescue Exception
+      rescue StandardError
         expr_code, expr_val = @value.code(scope)
       end
     elsif @mode == :reg
