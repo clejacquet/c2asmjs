@@ -5,12 +5,12 @@ int main() {
             a = 8;
     } while (a < 5 && a != 4);
 
-    /*for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 3; ++i) {
         a++;
-    }*/
+    }
 
     int j = 4;
-    for (j; j > 0; j--) {
+    for (; j > 0; j--) {
         a++;
     }
 
