@@ -1,6 +1,7 @@
 require_relative('unary_expr')
 
 class PostUnaryExpr < UnaryExpr
+=begin
   def code(scope)
     expr_type = @expr.type(scope)
     expr_code, expr_reg = @expr.code(scope)
@@ -13,4 +14,5 @@ class PostUnaryExpr < UnaryExpr
   def try_eval
     @expr.try_eval
   end
+=end
 end

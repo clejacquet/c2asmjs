@@ -1,20 +1,9 @@
 int test() {
-    int a = 0;
-
-    if (a) {
-        a = 2;
-    } else {
-        int b = 2;
-        if (b && 4) {
-            a = 3;
-        } else {
-            a = 4;
-        }
-    }
-
+    int a = 2;
+    a++;
     return a;
 }
 
 int main() {
-    return test();
+    return test() + 5;
 }

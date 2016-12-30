@@ -44,6 +44,10 @@ class BinExpr
 
   private
 
+  def op(type)
+    Type.to_llvm_op(sym, type)
+  end
+
   def try_optimize(expr, expr_type, dominant_type, scope)
     begin
       expr_val = expr.try_eval

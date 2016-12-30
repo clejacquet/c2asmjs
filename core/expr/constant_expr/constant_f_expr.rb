@@ -10,4 +10,8 @@ class ConstantFExpr < ConstantExpr
   def inner_type
     :float
   end
+
+  def try_eval
+    @val
+  end
 end

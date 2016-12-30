@@ -3,20 +3,12 @@ class UnaryExpr
     @expr = expr
   end
 
-  def val(type)
-    if type == :integer
-      '1'
-    elsif type == :float
-      '1.000000e+00'
-    end
-  end
-
   def code(scope)
     expr_type = @expr.type(scope)
-    expr_code, expr_reg = @expr.code(scope)
-    reg = scope.new_register
-    return "#{expr_code}#{reg} = #{Type.to_llvm_op(sym, expr_type)} #{Type.to_llvm(expr_type)} #{val(expr_type)}, #{expr_reg}\n",
-        reg
+    expr_code, expr_val = @expr.code(scope)
+
+    llvm_code, reg = build_code(expr_type, op(expr_type), expr_val, scope)
+    return expr_code + llvm_code, reg
   end
 
   def type(scope)
@@ -24,6 +16,27 @@ class UnaryExpr
   end
 
   def try_eval
-    @expr.try_eval
+    eval_calc(@expr.try_eval)
+  end
+
+  protected
+
+  def build_code(type, op, expr_val, scope)
+    reg = scope.new_register
+
+    if first_arg?
+      first_arg = "#{expr_val}, #{Type.val_to_llvm(type, extra_val)}"
+    else
+      first_arg = "#{Type.val_to_llvm(type, extra_val)}, #{expr_val}"
+    end
+
+    "#{reg} = #{Type.to_llvm_op(sym, type)} #{Type.to_llvm(type)} \n"
+    return "  #{reg} = #{op} #{Type.to_llvm(type)} #{first_arg}\n", reg
+  end
+
+  private
+
+  def op(type)
+    Type.to_llvm_op(sym, type)
   end
 end

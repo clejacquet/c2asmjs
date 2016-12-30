@@ -12,11 +12,18 @@ class ConstantExpr
     return "  #{reg} = #{op} #{llvm_type} #{initializer}, #{llvm_val}\n", reg
   end
 
-  def try_eval
-    @val
-  end
-
   def type(scope)
     inner_type
+  end
+
+  def self.build_constant(type, val)
+    case type
+      when :boolean
+        ConstantBExpr.new(val)
+      when :integer
+        ConstantIExpr.new(val)
+      else
+        ConstantFExpr.new(val)
+    end
   end
 end

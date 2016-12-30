@@ -41,6 +41,7 @@ rule
                     -                   { ['-', text] }
                     \*                  { ['*', text] }
                     \/                  { ['/', text] }
+                    \!                  { ['!', text] }
                     %                   { [:REM, text] }
                     >>                  { [:SHR, text] }
                     <<                  { [:SHL, text] }
