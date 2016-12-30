@@ -161,7 +161,7 @@ class Scanner
 
     iteration_statement
     : WHILE '(' expression ')' statement                { WhileStatement.new(val[2], val[4]) }
-    | DO statement WHILE '(' expression ')' ';'
+    | DO statement WHILE '(' expression ')' ';'         { DoWhileStatement.new(val[4], val[1]) }
 
     jump_statement
     : RETURN ';'                    { Return.new }
