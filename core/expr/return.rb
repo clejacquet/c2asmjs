@@ -18,7 +18,7 @@ class Return
         end
         expr_val = Type.val_to_llvm(expr_type, expr_val)
         expr_code = ''
-      rescue Exception => e
+      rescue Exception
         expr_code, expr_val = @value.code(scope)
       end
 

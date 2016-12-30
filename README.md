@@ -23,6 +23,7 @@ For running **samples/sample1.c**: `rake run[samples/sample1.c]`
 ## Evolutions possibles
     Gestion d'opérations "dangereuses" à la compilation (générer un warning overflow, ...)
     Extensions du langage (type bool <=> i1 en llvm)
+    Plusieurs return dans une fonction
     
     
     

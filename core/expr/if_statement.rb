@@ -9,11 +9,11 @@ class IfStatement
 
   def code(scope)
     expr_type = @expr.type(scope)
-    expr_code, expr_val = @expr.code(scope)
 
-    conversion_code = ''
     if expr_type != :boolean
-      conversion_code, expr_val = NeExpr.new(@expr, ConstantIExpr.new(0)).code(scope)
+      expr_code, expr_val = NeExpr.new(@expr, ConstantIExpr.new(0)).code(scope)
+    else
+      expr_code, expr_val = @expr.code(scope)
     end
 
     label1_reg = scope.new_register(false)
@@ -49,6 +49,6 @@ class IfStatement
       else_code = else_statement_code + br3 + label3
     end
 
-    expr_code + conversion_code + br1 + label1 + statement_code + br2 + label2 + else_code
+    expr_code + br1 + label1 + statement_code + br2 + label2 + else_code
   end
 end

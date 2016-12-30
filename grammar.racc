@@ -160,7 +160,7 @@ class Scanner
     | FOR '('            ';'            ';'            ')' statement
 
     iteration_statement
-    : WHILE '(' expression ')' statement
+    : WHILE '(' expression ')' statement                { WhileStatement.new(val[2], val[4]) }
     | DO statement WHILE '(' expression ')' ';'
 
     jump_statement
@@ -208,6 +208,8 @@ if ARGV.size >= 1
     rescue AlreadyDefinedError => msg
         STDERR.puts msg
     rescue IdentifierNotDefinedError => msg
+        STDERR.puts msg
+    rescue StandardError => msg
         STDERR.puts msg
     end
 else
