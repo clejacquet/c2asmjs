@@ -4,8 +4,8 @@ int main() {
 
 
     x++;
-    x = !x; // x == 0
-    //x = !x; // x == 1
+    x = !x;
+    x = !x;
     x--;
     x++;
 
@@ -13,9 +13,9 @@ int main() {
     y--;
 
     y = ++y;
-    //y = --y;
-    //y = y++;
-    //y = y--;
+    y = --y;
+    y = y++;
+    y = y--;
     y = -y;
 
     return x+y;

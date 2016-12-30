@@ -150,7 +150,7 @@ class Scanner
     selection_statement
     : IF '(' expression ')' statement   =LOWER_THAN_ELSE                { IfStatement.new(val[2], val[4]) }
     | IF '(' expression ')' statement ELSE statement                    { IfStatement.new(val[2], val[4], val[6]) }
-    | FOR '(' expression ';' expression ';' expression ')' statement
+    | FOR '(' expression ';' expression ';' expression ')' statement    { ForStatement.new(val[2], val[4], val[6], val[8]) }
     | FOR '(' expression ';' expression ';'            ')' statement
     | FOR '(' expression ';'            ';' expression ')' statement
     | FOR '(' expression ';'            ';'            ')' statement

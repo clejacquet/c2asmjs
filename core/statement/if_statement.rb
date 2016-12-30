@@ -1,4 +1,4 @@
-require_relative('constant_expr/constant_i_expr')
+require_relative('../../core/expr/constant_expr/constant_i_expr')
 
 class IfStatement
   def initialize(expr, statement, else_statement = nil)

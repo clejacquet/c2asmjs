@@ -1,7 +1,8 @@
 class WhileStatement
-  def initialize(cond_expr, statement)
-    @cond_expr = cond_expr
-    @statement = statement
+  def initialize(cond_expr, statement, step = nil)
+      @cond_expr = cond_expr
+      @statement = statement
+      @step = step
   end
 
   def code(scope)
@@ -10,7 +11,6 @@ class WhileStatement
     scope.set_last_br("%#{label1_reg}")
 
     cond_expr_type = @cond_expr.type(scope)
-
     if cond_expr_type != :boolean
       cond_expr_code, cond_expr_val = NeExpr.new(@cond_expr, ConstantIExpr.new(0)).code(scope)
     else
@@ -22,8 +22,12 @@ class WhileStatement
     scope.set_last_br("%#{label2_reg}")
 
     statement_code = @statement.code(scope)
-    if statement_code.is_a? Array
-      statement_code = statement_code[0]
+      if statement_code.is_a? Array
+        statement_code = statement_code[0]
+      end
+
+    if @step
+      statement_code += @step.code(scope)[0]
     end
 
     label3_reg = scope.new_register(false)
