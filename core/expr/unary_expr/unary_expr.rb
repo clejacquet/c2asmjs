@@ -7,6 +7,8 @@ class UnaryExpr
     expr_type = @expr.type(scope)
     expr_code, expr_val = @expr.code(scope)
 
+    try
+
     llvm_code, reg = build_code(expr_type, op(expr_type), expr_val, scope)
     return expr_code + llvm_code, reg
   end

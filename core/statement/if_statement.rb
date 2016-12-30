@@ -10,12 +10,47 @@ class IfStatement
   def code(scope)
     expr_type = @expr.type(scope)
 
-    if expr_type != :boolean
-      expr_code, expr_val = NeExpr.new(@expr, ConstantIExpr.new(0)).code(scope)
-    else
-      expr_code, expr_val = @expr.code(scope)
+    begin
+      expr_val = @expr.try_eval
+
+      if expr_val != 0
+        code_only_if(scope)
+      else
+        code_only_else(scope)
+      end
+    rescue StandardError
+      if expr_type != :boolean
+        expr_code, expr_val = NeExpr.new(@expr, ConstantIExpr.new(0)).code(scope)
+      else
+        expr_code, expr_val = @expr.code(scope)
+      end
+      code_not_evaluated(expr_code, expr_val, scope)
+    end
+  end
+
+  private
+
+  def code_only_if(scope)
+    statement_code = @statement.code(scope)
+    if statement_code.is_a? Array
+      statement_code = statement_code[0]
+    end
+    statement_code
+  end
+
+  def code_only_else(scope)
+    if @else_statement.nil?
+      return ''
     end
 
+    statement_code = @else_statement.code(scope)
+    if statement_code.is_a? Array
+      statement_code = statement_code[0]
+    end
+    statement_code
+  end
+
+  def code_not_evaluated(expr_code, expr_val, scope)
     label1_reg = scope.new_register(false)
     label1 = "\n; <label>:#{label1_reg}\n"
 
