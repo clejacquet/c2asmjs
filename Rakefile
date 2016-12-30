@@ -25,6 +25,7 @@ task :tests => :build do
   for filename in tests
     my_ret = -1
     clang_ret = -1
+
     sh "ruby build/grammar.racc.rb tests/#{filename}.c > tests/#{filename}.ll"
     sh "clang tests/#{filename}.ll -o build/my_#{filename}.out"
     sh "./build/my_#{filename}.out" do |ok, res|
