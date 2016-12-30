@@ -5,9 +5,13 @@ class UnaryExpr
 
   def code(scope)
     expr_type = @expr.type(scope)
-    expr_code, expr_val = @expr.code(scope)
 
-    try
+    begin
+      expr_val = Type.val_to_llvm(expr_type, @expr.try_eval)
+      expr_code = ''
+    rescue StandardError
+      expr_code, expr_val = @expr.code(scope)
+    end
 
     llvm_code, reg = build_code(expr_type, op(expr_type), expr_val, scope)
     return expr_code + llvm_code, reg
