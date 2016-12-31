@@ -9,11 +9,13 @@ class CompoundStatement
     inner_scope = InnerScope.new(IdentifierTable.new, scope)
 
     @compound_statement.reduce('') do |acc, statement|
-      statement_code = statement.code(inner_scope)
-      if statement_code.is_a? Array
-        statement_code = statement_code[0]
+      if statement
+        statement_code = statement.code(inner_scope)
+        if statement_code.is_a? Array
+          statement_code = statement_code[0]
+        end
+        acc + statement_code
       end
-      acc + statement_code
     end
   end
 end

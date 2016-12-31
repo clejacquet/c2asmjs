@@ -40,8 +40,8 @@ class Scanner
 
     shift_expression
     : additive_expression                               { val[0] }
-    | shift_expression SHL additive_expression
-    | shift_expression SHR additive_expression
+    | shift_expression SHL additive_expression          { ShiftLeftExpr.new(val[0], val[2]) }
+    | shift_expression SHR additive_expression          { ShiftRightExpr.new(val[0], val[2]) }
 
     primary_expression
     : IDENTIFIER                                        { IdentifierExpr.new(val[0]) }

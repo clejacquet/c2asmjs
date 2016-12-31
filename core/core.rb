@@ -14,6 +14,8 @@ require_relative('expr/bin_expr/lt_expr')
 require_relative('expr/bin_expr/gt_expr')
 require_relative('expr/bin_expr/and_expr')
 require_relative('expr/bin_expr/or_expr')
+require_relative('expr/bin_expr/shift_right_expr')
+require_relative('expr/bin_expr/shift_left_expr')
 
 require_relative('expr/unary_expr/unary_expr')
 require_relative('expr/unary_expr/dec_expr')

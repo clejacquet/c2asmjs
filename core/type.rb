@@ -190,6 +190,12 @@ module Type
           boolean: 'xor',
           integer: 'xor',
           float: 'xor'
+      },
+      SHL: {
+          integer: 'shl'
+      },
+      SHR: {
+          integer: 'ashr'
       }
   }
 

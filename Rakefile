@@ -1,7 +1,8 @@
 tests = [
     'unary_test',
     'comp_test',
-    'cond_test'
+    'cond_test',
+    'shift_test'
 ]
 
 task default: :build
