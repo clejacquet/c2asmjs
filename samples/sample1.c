@@ -1,9 +1,16 @@
+double angle;
+
+void draw() {
+    angle += 0.01;
+}
+
 int main() {
-    int a = 1;
-    if (2 + 3 > 6) {
-        a = 2;
-    } else {
-        a = 3;
+    angle = 0;
+
+    int i = 0;
+    for (i = 0; i < 150; i++) {
+        draw();
     }
-    return a;
+
+    return angle;
 }

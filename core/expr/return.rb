@@ -29,7 +29,7 @@ class Return
 
       "#{expr_code}#{conversion_code}  ret #{Type.to_llvm(function_type)} #{expr_val}\n"
     else
-      'ret void'
+      '  ret void'
     end
   end
 end

@@ -81,13 +81,7 @@ module Type
       integer: {
           llvm: 'i32',
           policy: lambda { |value| value.respond_to? :to_i },
-          to_str: lambda do |value|
-            if not value.is_a? Numeric
-              (value) ? 1 : 0
-            else
-              value.to_s
-            end
-          end
+          to_str: lambda { |value| value.to_s }
       },
       float: {
           llvm: 'double',

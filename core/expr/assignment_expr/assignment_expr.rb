@@ -7,20 +7,20 @@ class AssignmentExpr
   def code(scope)
     expr_type = @expr.type(scope)
 
+    type = scope.get_type(@id)
+    var = scope.get_reg(@id)
+    llvm_type = Type.to_llvm(type)
+
     begin
-      expr_val = Type.val_to_llvm(expr_type, @expr.try_eval)
+      expr_val = Type.val_to_llvm(type, @expr.try_eval)
       expr_code = ''
     rescue StandardError
       expr_code, expr_val = @expr.code(scope)
+      conversion_code, expr_val = Type.build_conversion(expr_type, type, expr_val, scope)
+      expr_code += conversion_code
     end
 
-    type = scope.get_type(@id)
-    var = scope.get_name(@id)
-    llvm_type = Type.to_llvm(type)
-
-    conversion_code, expr_val = Type.build_conversion(expr_type, type, expr_val, scope)
-
-    return "#{expr_code}#{conversion_code}  store #{llvm_type} #{expr_val}, #{llvm_type}* #{var}\n", expr_val
+    return "#{expr_code}  store #{llvm_type} #{expr_val}, #{llvm_type}* #{var}\n", expr_val
   end
 
   def try_eval

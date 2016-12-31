@@ -72,6 +72,9 @@ class IfStatement
     else_code = ''
     unless @else_statement.nil?
       else_statement_code = @else_statement.code(scope)
+      if else_statement_code.is_a? Array
+        else_statement_code = else_statement_code[0]
+      end
 
       label3_reg = scope.new_register(false)
       label3 = "\n; <label>:#{label3_reg}\n"

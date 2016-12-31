@@ -8,17 +8,26 @@ class IdentifierTable
     @table = Hash.new
   end
 
-  def add_id(id, type, line_num=-1)
+  def add_id(id, reg, type, line_num=-1)
     raise AlreadyDefinedError.new(id, line_num) if @table.has_key? id.to_sym
 
-    @table[id.to_sym] = type
+    @table[id.to_sym] = {
+        type: type,
+        reg: reg
+    }
     id
   end
 
   def get_type(id, line_num=-1)
     raise IdentifierNotDefinedError.new(id.to_sym, line_num) unless @table.has_key? id.to_sym
 
-    @table[id.to_sym]
+    @table[id.to_sym][:type]
+  end
+
+  def get_reg(id, line_num=-1)
+    raise IdentifierNotDefinedError.new(id.to_sym, line_num) unless @table.has_key? id.to_sym
+
+    @table[id.to_sym][:reg]
   end
 
   def has_id?(id)

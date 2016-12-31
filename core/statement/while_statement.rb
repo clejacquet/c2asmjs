@@ -38,8 +38,8 @@ class WhileStatement
     label2 = "\n; <label>:#{label2_reg}\n"
     label3 = "\n; <label>:#{label3_reg}\n"
 
-    br1 = "  br label %#{label1_reg}"
-    br2 = "  br #{Type.to_llvm(:boolean)} #{cond_expr_val}, label %#{label2_reg}, label %#{label3_reg}"
+    br1 = "  br label %#{label1_reg}\n"
+    br2 = "  br #{Type.to_llvm(:boolean)} #{cond_expr_val}, label %#{label2_reg}, label %#{label3_reg}\n"
 
     br1 + label1 + cond_expr_code + br2 + label2 + statement_code + br1 + label3
   end
