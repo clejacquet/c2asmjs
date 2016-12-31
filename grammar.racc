@@ -89,18 +89,18 @@ class Scanner
     | comparison_expression NE_OP shift_expression      { NeExpr.new(val[0], val[2]) }
 
     expression
-    : IDENTIFIER assignment_operator conditional_expression         { AssignmentExpr.new(val[0], val[2]) }
+    : IDENTIFIER assignment_operator conditional_expression         { AssignmentExprFactory.build(val[1], val[0], val[2]) }
     | conditional_expression                                        { val[0] }
 
     assignment_operator
-    : '='
-    | MUL_ASSIGN
-    | DIV_ASSIGN
-    | REM_ASSIGN
-    | SHL_ASSIGN
-    | SHR_ASSIGN
-    | ADD_ASSIGN
-    | SUB_ASSIGN
+    : '='                                                           { :'=' }
+    | MUL_ASSIGN                                                    { :MUL_ASSIGN }
+    | DIV_ASSIGN                                                    { :DIV_ASSIGN }
+    | REM_ASSIGN                                                    { :REM_ASSIGN }
+    | SHL_ASSIGN                                                    { :SHL_ASSIGN }
+    | SHR_ASSIGN                                                    { :SHR_ASSIGN }
+    | ADD_ASSIGN                                                    { :ADD_ASSIGN }
+    | SUB_ASSIGN                                                    { :SUB_ASSIGN }
 
     declaration
     : type_name declarator_list ';'                 { DeclarationBuilder.new(val[0], val[1]) }
@@ -168,7 +168,9 @@ class Scanner
     | RETURN expression ';'         { Return.new(val[1]) }
 
     program
-    : external_declaration_list         { val[0].each { |ext_decl| puts "#{ext_decl.code(@scope)}" } }
+    : external_declaration_list         { @scope.declaration_code + val[0].reduce('') do |acc, ext_decl|
+                                            acc + "#{ext_decl.code(@scope)}"
+                                          end }
 
     external_declaration_list
     : external_declaration                              { [val[0]] }
@@ -190,6 +192,8 @@ require_relative '../core/core'
 
 ---- inner ----
 
+attr_reader :scope
+
 def initialize
     @scope = GlobalScope.new(IdentifierTable.new)
 end
@@ -200,18 +204,4 @@ end
 
 ---- footer ----
 
-if ARGV.size >= 1
-    scanner = Scanner.new
-
-    begin
-        scanner.scan_file ARGV[0]
-    rescue AlreadyDefinedError => msg
-        STDERR.puts msg
-    rescue IdentifierNotDefinedError => msg
-        STDERR.puts msg
-    rescue StandardError => msg
-        STDERR.puts msg
-    end
-else
-    raise 'Error, no filename provided !'
-end
+Main.new(Scanner.new).launch

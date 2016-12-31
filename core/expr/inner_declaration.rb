@@ -18,8 +18,9 @@ class InnerDeclaration
 
   def code_no_expr(scope)
     @declarator_list.reduce('') do |acc, id|
-      reg = scope.get_name(scope.new_id(id, @type))
-      acc + allocation(reg)
+      reg = scope.new_register(false)
+      scope.new_id(id, reg, @type)
+      acc + allocation("%#{reg}")
     end
   end
 
@@ -43,9 +44,10 @@ class InnerDeclaration
     end
 
     alloc_code = @declarator_list.reduce('') do |acc, id|
-      reg = scope.get_name(scope.new_id(id, @type))
+      reg = scope.new_register(false)
+      scope.new_id(id, reg, @type)
       conversion_code, expr_val = Type.build_conversion(expr_type, @type, expr_val, scope)
-      acc + allocation(reg) + conversion_code + store(reg, expr_val)
+      acc + allocation("%#{reg}") + conversion_code + store("%#{reg}", expr_val)
     end
 
     expr_code + alloc_code

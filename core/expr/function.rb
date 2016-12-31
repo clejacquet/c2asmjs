@@ -20,7 +20,7 @@ class Function
   end
 
   def code(gscope)
-    gscope.new_id(@id, { return: @type, args: @args.map { |arg| arg[:type] }})
+    gscope.new_id(@id, nil, { return: @type, args: @args.map { |arg| arg[:type] }})
     @scope = FunctionScope.new(IdentifierTable.new, gscope, self)
 
     arg_regs = @args.map do |arg|
@@ -37,10 +37,10 @@ class Function
 
     statements_code = arg_declarations + @compound_statement.code(@scope)
 
-    return_code = (@scope.get_jump_done != :return) ? "ret void\n" : ''
+    return_code = (@scope.get_jump_done != :return) ? "  ret void\n" : ''
     statements_code += return_code
 
-    "define #{Type.to_llvm(@type)} @#{@id}(#{args_str}) {\n#{statements_code}}\n\n"
+    "\ndefine #{Type.to_llvm(@type)} @#{@id}(#{args_str}) {\n#{statements_code}}\n"
   end
 
   private

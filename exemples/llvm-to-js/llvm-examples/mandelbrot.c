@@ -30,7 +30,9 @@ void my_draw()
   centerr = -0.800671;
   centeri = 0.158392;
 
+  y = 0
   for  (y = 0; y < h; y++)  {
+    x = 0;
     for (x = 0; x < w; x++) {
       m=0;
       /* Get the complex poing on gauss space to be calculate */
@@ -39,6 +41,7 @@ void my_draw()
       ci=centeri + (y - (h/2))/zoom;
       zi=ci;
       /* Applies the actual mandelbrot formula on that point */
+      n = 0;
       for (n = 0; n <= maxiter && m < bail_out * bail_out; n ++) {
     a=zr*zr-zi*zi+cr;
     b=2*zr*zi+ci;

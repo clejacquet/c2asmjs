@@ -50,15 +50,15 @@ class InnerScope < Scope
     end
   end
 
-  def get_name(id)
+  def get_reg(id)
     if not @id_table.has_id?(id)
       if not @next_scope.nil?
-        return @next_scope.get_name(id)
+        return @next_scope.get_reg(id)
       else
         raise IdentifierNotDefinedError.new(id.to_sym, -1)
       end
     else
-      "%v#{object_id}_#{id}"
+      "%#{@id_table.get_reg(id)}"
     end
   end
 end

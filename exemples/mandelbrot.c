@@ -30,7 +30,9 @@ void my_draw()
   centerr = -0.800671;
   centeri = 0.158392;
 
+  y = 0;
   for  (y = 0; y < h; y++)  {
+    x = 0;
     for (x = 0; x < w; x++) {
       m=0;
       /* Get the complex poing on gauss space to be calculate */
@@ -38,13 +40,15 @@ void my_draw()
       zr=cr;
       ci=centeri + (y - (h/2))/zoom;
       zi=ci;
+
+      n = 0;
       /* Applies the actual mandelbrot formula on that point */
       for (n = 0; n <= maxiter && m < bail_out * bail_out; n ++) {
-    a=zr*zr-zi*zi+cr;
-    b=2*zr*zi+ci;
-	zr=a;
-	zi=b;
-	m=a*a+b*b;
+        a=zr*zr-zi*zi+cr;
+        b=2*zr*zi+ci;
+        zr=a;
+        zi=b;
+        m=a*a+b*b;
       }
 
       /* Paint the pixel calculated depending on the number

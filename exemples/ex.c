@@ -20,7 +20,7 @@ void my_setup()
 // Appelé à chaque frame depuis sketch.js
 void my_draw()
 {
-  int i;
+  int i = 0;
   double r;
 
   // Fond noir

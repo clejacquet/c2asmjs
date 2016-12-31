@@ -1,6 +1,6 @@
 require_relative('unary_expr')
 require_relative('../identifier_expr')
-require_relative('../assignment_expr')
+require_relative('../assignment_expr/add_assignment_expr')
 require_relative('../../../core/expr/bin_expr/sub_expr')
 
 class DecExpr < IdentifierExpr

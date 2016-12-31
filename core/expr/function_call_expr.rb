@@ -15,18 +15,29 @@ class FunctionCallExpr
     @args.each_index do |arg_id|
       arg_type = args_type[arg_id]
       arg_expr_type = @args[arg_id].type(scope)
-      arg_expr_code, arg_expr_reg = @args[arg_id].code(scope)
 
-      arg_conversion_code, arg_expr_reg = Type.build_conversion(arg_expr_type, arg_type, arg_expr_reg, scope)
+      begin
+        arg_expr_val = Type.val_to_llvm(arg_type, @args[arg_id].try_eval)
+        arg_expr_code = ''
+      rescue StandardError
+        arg_expr_code, arg_expr_val = @args[arg_id].code(scope)
+        arg_conversion_code, arg_expr_val = Type.build_conversion(arg_expr_type, arg_type, arg_expr_val, scope)
+        arg_expr_code += arg_conversion_code
+      end
 
-      arg_expr_codes.push(arg_expr_code + arg_conversion_code)
-      arg_final_exprs.push("#{Type.to_llvm(arg_type)} #{arg_expr_reg}")
+      arg_expr_codes.push(arg_expr_code)
+      arg_final_exprs.push("#{Type.to_llvm(arg_type)} #{arg_expr_val}")
     end
 
-    reg = scope.new_register
     expr_code = arg_expr_codes.join
     arg_code = arg_final_exprs.join(', ')
     llvm_return_type = Type.to_llvm(return_type)
+
+    if return_type == :void
+      return "#{expr_code}  call #{llvm_return_type} @#{@id}(#{arg_code})\n", nil
+    end
+
+    reg = scope.new_register
     return "#{expr_code}  #{reg} = call #{llvm_return_type} @#{@id}(#{arg_code})\n", reg
   end
 

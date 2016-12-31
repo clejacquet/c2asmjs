@@ -8,7 +8,7 @@ class IdentifierExpr
   def code(scope)
     reg = scope.new_register
 
-    var = scope.get_name(@id)
+    var = scope.get_reg(@id)
     llvm_type = Type.to_llvm(type(scope))
     return "  #{reg} = load #{llvm_type}, #{llvm_type}* #{var}\n", reg
   end

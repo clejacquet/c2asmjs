@@ -1,3 +1,5 @@
+require_relative('main')
+
 require_relative('expr/constant_expr/constant_i_expr')
 require_relative('expr/constant_expr/constant_f_expr')
 
@@ -30,7 +32,8 @@ require_relative('expr/identifier_expr')
 require_relative('expr/function_call_expr')
 require_relative('expr/function')
 require_relative('expr/return')
-require_relative('expr/assignment_expr')
+require_relative('expr/assignment_expr/assignment_expr')
+require_relative('expr/assignment_expr/assignment_expr_factory')
 
 require_relative('expr/declaration_builder')
 
