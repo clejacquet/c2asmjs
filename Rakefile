@@ -1,4 +1,5 @@
 tests = [
+    'array_test',
     'unary_test',
     'comp_test',
     'cond_test',
@@ -43,6 +44,10 @@ task :tests => :build do
       puts("Test #{filename} succeeded : both returned #{my_ret}\n")
     end
   end
+end
+
+task :test_error_handling => :build do
+  sh "ruby build/grammar.racc.rb tests/error_handling_test.c"
 end
 
 task :clean do

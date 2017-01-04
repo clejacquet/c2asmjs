@@ -92,6 +92,7 @@ class Scanner
     : IDENTIFIER assignment_operator conditional_expression         { AssignmentExprFactory.build(val[1], val[0], val[2]) }
     | conditional_expression                                        { val[0] }
 
+
     assignment_operator
     : '='                                                           { :'=' }
     | MUL_ASSIGN                                                    { :MUL_ASSIGN }
@@ -108,7 +109,9 @@ class Scanner
 
     declarator_list
     : IDENTIFIER                        { [ val[0] ] }
+    | IDENTIFIER '[' CONSTANTI ']' { [val[0], val[2]] }
     | declarator_list ',' IDENTIFIER    { val[0].push(val[2]) }
+    | declarator_list ',' IDENTIFIER '[' CONSTANTI ']' { val[0].push([val[2], val[4]]) }
 
     type_name
     : VOID          { :void }

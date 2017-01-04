@@ -45,17 +45,27 @@ class InnerDeclaration
 
     alloc_code = @declarator_list.reduce('') do |acc, id|
       reg = scope.new_register(false)
-      scope.new_id(id, reg, @type)
-      conversion_code, expr_val = Type.build_conversion(expr_type, @type, expr_val, scope)
-      acc + allocation("%#{reg}") + conversion_code + store("%#{reg}", expr_val)
+      if id.is_a? Array
+        scope.new_id(@declarator_list, reg, expr_type)
+        array_allocation(reg, @value) + "store #{type} 0, #{type}* #{reg}\n"
+      else
+        scope.new_id(id, reg, @type)
+        conversion_code, expr_val = Type.build_conversion(expr_type, @type, expr_val, scope)
+        acc + allocation("%#{reg}") + conversion_code + store("%#{reg}", expr_val)
+      end
     end
 
-    expr_code + alloc_code
+      expr_code + alloc_code
   end
 
   def allocation(reg)
     llvm_type = Type.to_llvm(@type)
     "  #{reg} = alloca #{llvm_type}\n"
+  end
+
+  def array_allocation(size, reg)
+    llvm_type = Type.to_llvm(@type)
+    "  #{reg} = alloca [#{size}*#{llvm_type}]\n"
   end
 
   def store(reg, expr_reg)
