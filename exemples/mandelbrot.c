@@ -54,7 +54,7 @@ void my_draw()
       /* Paint the pixel calculated depending on the number
 	 of iterations found */
       if (n<maxiter)
-	   color= n / maxiter * 255;
+	   color= (1.0 * n / maxiter) * 255.;
       else color=0;
 
       stroke(color);

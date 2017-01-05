@@ -267,6 +267,12 @@ module Type
           boolean: :boolean,
           integer: :boolean,
           float: :boolean
+      },
+      SHL: {
+          integer: :integer
+      },
+      SHR: {
+          integer: :integer
       }
   }
 

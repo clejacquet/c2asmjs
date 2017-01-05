@@ -69,10 +69,10 @@ class Scanner
 
 
     multiplicative_expression
-    : unary_expression                                      { val[0] }
-    | multiplicative_expression '*' unary_expression        { MulExpr.new(val[0], val[2]) }
-    | multiplicative_expression '/' unary_expression        { DivExpr.new(val[0], val[2]) }
-    | multiplicative_expression REM unary_expression        { RemExpr.new(val[0], val[2]) }
+    : unary_expression                                  { val[0] }
+    | multiplicative_expression '*' unary_expression    { MulExpr.new(val[0], val[2]) }
+    | multiplicative_expression '/' unary_expression    { DivExpr.new(val[0], val[2]) }
+    | multiplicative_expression REM unary_expression    { RemExpr.new(val[0], val[2]) }
 
     additive_expression
     : multiplicative_expression                             { val[0] }
@@ -92,20 +92,19 @@ class Scanner
     : IDENTIFIER assignment_operator conditional_expression         { AssignmentExprFactory.build(val[1], val[0], val[2]) }
     | conditional_expression                                        { val[0] }
 
-
     assignment_operator
-    : '='                                                           { :'=' }
-    | MUL_ASSIGN                                                    { :MUL_ASSIGN }
-    | DIV_ASSIGN                                                    { :DIV_ASSIGN }
-    | REM_ASSIGN                                                    { :REM_ASSIGN }
-    | SHL_ASSIGN                                                    { :SHL_ASSIGN }
-    | SHR_ASSIGN                                                    { :SHR_ASSIGN }
-    | ADD_ASSIGN                                                    { :ADD_ASSIGN }
-    | SUB_ASSIGN                                                    { :SUB_ASSIGN }
+    : '='                                               { :'=' }
+    | MUL_ASSIGN                                        { :MUL_ASSIGN }
+    | DIV_ASSIGN                                        { :DIV_ASSIGN }
+    | REM_ASSIGN                                        { :REM_ASSIGN }
+    | SHL_ASSIGN                                        { :SHL_ASSIGN }
+    | SHR_ASSIGN                                        { :SHR_ASSIGN }
+    | ADD_ASSIGN                                        { :ADD_ASSIGN }
+    | SUB_ASSIGN                                        { :SUB_ASSIGN }
 
     declaration
-    : type_name declarator_list ';'                 { DeclarationBuilder.new(val[0], val[1]) }
-    | type_name declarator_list '=' expression ';'  { DeclarationBuilder.new(val[0], val[1], { mode: :expr, value: val[3] }) }
+    : type_name declarator_list ';'                     { DeclarationBuilder.new(val[0], val[1]) }
+    | type_name declarator_list '=' expression ';'      { DeclarationBuilder.new(val[0], val[1], { mode: :expr, value: val[3] }) }
 
     declarator_list
     : IDENTIFIER                        { [ val[0] ] }
@@ -114,41 +113,41 @@ class Scanner
     | declarator_list ',' IDENTIFIER '[' CONSTANTI ']' { val[0].push([val[2], val[4]]) }
 
     type_name
-    : VOID          { :void }
-    | INT           { :integer }
-    | FLOAT         { :float }
-    | DOUBLE        { :float }
+    : VOID                                              { :void }
+    | INT                                               { :integer }
+    | FLOAT                                             { :float }
+    | DOUBLE                                            { :float }
 
     declarator
-    : IDENTIFIER '(' parameter_list ')'             { { id: val[0], args: val[2] } }
-    | IDENTIFIER '(' ')'                            { { id: val[0] } }
+    : IDENTIFIER '(' parameter_list ')'                 { { id: val[0], args: val[2] } }
+    | IDENTIFIER '(' ')'                                { { id: val[0] } }
 
     parameter_list
-    : parameter_declaration                         { [ val[0] ] }
-    | parameter_list ',' parameter_declaration      { val[0].push(val[2]) }
+    : parameter_declaration                             { [ val[0] ] }
+    | parameter_list ',' parameter_declaration          { val[0].push(val[2]) }
 
     parameter_declaration
-    : type_name IDENTIFIER                          { { type: val[0], id: val[1] } }
+    : type_name IDENTIFIER                              { { type: val[0], id: val[1] } }
 
     statement
-    : declaration                                   { val[0].build_inner }
-    | compound_statement                            { val[0] }
-    | expression_statement
-    | selection_statement
-    | iteration_statement
-    | jump_statement                                { val[0] }
+    : declaration                                       { val[0].build_inner }
+    | compound_statement                                { val[0] }
+    | expression_statement                              { val[0] }
+    | selection_statement                               { val[0] }
+    | iteration_statement                               { val[0] }
+    | jump_statement                                    { val[0] }
 
     compound_statement
-    : '{' '}'                                       { CompoundStatement.new(Array.new) }
-    | '{' statement_list '}'                        { CompoundStatement.new(val[1]) }
+    : '{' '}'                                           { CompoundStatement.new(Array.new) }
+    | '{' statement_list '}'                            { CompoundStatement.new(val[1]) }
 
     statement_list
-    : statement                                     { [val[0]] }
-    | statement_list statement                      { val[0].push(val[1]) }
+    : statement                                         { [val[0]] }
+    | statement_list statement                          { val[0].push(val[1]) }
 
     expression_statement
-    : ';'                                           { nil }
-    | expression ';'                                { val[0] }
+    : ';'                                               { nil }
+    | expression ';'                                    { val[0] }
 
     selection_statement
     : IF '(' expression ')' statement   =LOWER_THAN_ELSE                { IfStatement.new(val[2], val[4]) }
@@ -167,13 +166,13 @@ class Scanner
     | DO statement WHILE '(' expression ')' ';'         { DoWhileStatement.new(val[4], val[1]) }
 
     jump_statement
-    : RETURN ';'                    { Return.new }
-    | RETURN expression ';'         { Return.new(val[1]) }
+    : RETURN ';'                                        { Return.new }
+    | RETURN expression ';'                             { Return.new(val[1]) }
 
     program
-    : external_declaration_list         { @scope.declaration_code + val[0].reduce('') do |acc, ext_decl|
-                                            acc + "#{ext_decl.code(@scope)}"
-                                          end }
+    : external_declaration_list                         { @scope.declaration_code + val[0].reduce('') do |acc, ext_decl|
+                                                            acc + ext_decl.code(@scope).to_s
+                                                          end }
 
     external_declaration_list
     : external_declaration                              { [val[0]] }
@@ -181,11 +180,11 @@ class Scanner
 
 
     external_declaration
-    : function_definition               { val[0] }
-    | declaration                       { val[0].build_global }
+    : function_definition                               { val[0] }
+    | declaration                                       { val[0].build_global }
 
     function_definition
-    : type_name declarator compound_statement               { Function.new(val[0], val[1], val[2]) }
+    : type_name declarator compound_statement           { Function.new(val[0], val[1], val[2]) }
 end
 
 ---- header ----

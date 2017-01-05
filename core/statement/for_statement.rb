@@ -10,7 +10,7 @@ class ForStatement
 
   def code(scope)
     if@init
-      @init.code(scope)[0] + + WhileStatement.new(@cond, @statement, @step).code(scope)
+      @init.code(scope)[0] + WhileStatement.new(@cond, @statement, @step).code(scope)
     else
       WhileStatement.new(@cond, @statement, @step).code(scope)
     end
