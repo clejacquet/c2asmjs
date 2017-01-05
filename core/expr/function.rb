@@ -24,7 +24,7 @@ class Function
     @scope = FunctionScope.new(IdentifierTable.new, gscope, self)
 
     arg_regs = @args.map do |arg|
-      { type: arg[:type], reg: id_to_arg_name(@scope, arg[:id]), id: arg[:id] }
+      { type: arg[:type], reg: "%#{arg[:id]}", id: arg[:id] }
     end
 
     arg_declarations = arg_regs.map do |arg|
@@ -41,11 +41,5 @@ class Function
     statements_code += return_code
 
     "\ndefine #{Type.to_llvm(@type)} @#{@id}(#{args_str}) {\n#{statements_code}}\n"
-  end
-
-  private
-
-  def id_to_arg_name(scope, id)
-    "%a#{scope.object_id}_#{id}"
   end
 end

@@ -3230,7 +3230,7 @@ function parseCoverageTable(data, start) {
     }
 }
 
-// Parse a Class Definition Table in a GSUB, GPOS or GDEF table.
+// Parse a Class FunctionDefinition Table in a GSUB, GPOS or GDEF table.
 // Returns a function that gets a class value from a glyph ID.
 function parseClassDefTable(data, start) {
     var p = new parse.Parser(data, start);

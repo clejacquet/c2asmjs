@@ -3,7 +3,8 @@ require_relative('scope')
 class GlobalScope < Scope
   def initialize(id_table)
     super
-    @functions = Array.new
+    @function_definitions = Array.new
+    @function_declarations = Array.new
     @constants = Array.new
   end
 
@@ -23,8 +24,12 @@ class GlobalScope < Scope
     "@#{id}"
   end
 
+  def add_func_definition(func_definition)
+    @function_definitions.push(func_definition)
+  end
+
   def declare_func(function_name, function_type, function_args_type)
-    @functions.push(name: function_name, type: function_type, args_type: function_args_type)
+    @function_declarations.push(name: function_name, type: function_type, args_type: function_args_type)
     new_id(function_name, nil, { return: function_type, args: function_args_type })
   end
 
@@ -38,7 +43,7 @@ class GlobalScope < Scope
       acc + "@#{constant[:id]} = constant #{constant[:type]} #{constant[:value]}\n"
     end + "\n"
 
-    functions_code = @functions.reduce('') do |acc, declaration|
+    functions_code = @function_declarations.reduce('') do |acc, declaration|
       args_type = declaration[:args_type].map do |arg_type|
         if arg_type.is_a? Symbol
           Type.to_llvm(arg_type)
@@ -53,7 +58,7 @@ class GlobalScope < Scope
         type = declaration[:type].to_s
       end
       acc + "declare #{type} @#{declaration[:name]}(#{args_type})\n"
-    end + "\n"
+    end + "\n" + @function_definitions.map { |func_def| func_def.code(self) }.join('') + "\n"
 
     constants_code + functions_code
   end

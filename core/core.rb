@@ -37,6 +37,8 @@ require_relative('expr/assignment_expr/assignment_expr_factory')
 
 require_relative('expr/declaration_builder')
 
+require_relative('definition/function_definition')
+
 require_relative('statement/compound_statement')
 require_relative('statement/if_statement')
 require_relative('statement/while_statement')
