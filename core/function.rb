@@ -35,7 +35,7 @@ class Function
     end
 
     arg_declarations = arg_regs.map do |arg|
-      InnerDeclaration.new(arg[:type], [arg[:id]], :reg, arg).code(@scope)
+      InnerDeclaration.new(arg[:type], [arg[:id]], :reg, arg, @lineno).code(@scope)
     end.join
 
     args_str = arg_regs.map do |arg|

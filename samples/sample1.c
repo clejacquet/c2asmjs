@@ -1,20 +1,17 @@
+int a = 3;
+float x = 7.432;
+
+int add(int a, int b) {
+    return a + b;
+}
+
+float mult(float x, int y) {
+    return add(x,x) * y;
+}
+
 int main() {
-    int array_length = 43;
-    int array[array_length];
-    float farray[array_length];
+    a += 5;
+    float y = x;
 
-    int i = 0;
-    int j = array_length-1;
-    int res = 0;
-
-    for (i; i < array_length; i++) {
-        array[i] = (i+1)*(i+1.0);
-        farray[i] = 0.24 * array[i];
-    }
-
-    for (j; j >= 0; j--) {
-        res += farray[j];
-    }
-
-    return res % 256;
+    return a + mult(x, y);
 }
