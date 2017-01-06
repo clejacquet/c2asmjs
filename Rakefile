@@ -27,9 +27,9 @@ task :run, [:file] => [:build] do |t, args|
 end
 
 task :test, [:file] => [:build] do |t, args|
-  sh "ruby build/grammar.racc.rb #{args.file} > samples/out.ll"
-  sh 'clang samples/out.ll -target x86_64-unknown-linux-gnu -o samples/out'
-  sh 'samples/out; echo $? 1>&2'
+  sh "ruby build/grammar.racc.rb #{args.file} > build/out.ll"
+  sh 'clang build/out.ll -target x86_64-unknown-linux-gnu -o build/out'
+  sh 'build/out; echo $? 1>&2'
 end
 
 task :tests => :build do
@@ -37,12 +37,12 @@ task :tests => :build do
     my_ret = -1
     clang_ret = -1
 
-    sh "ruby build/grammar.racc.rb tests/#{filename}.c > tests/#{filename}.ll"
-    sh "clang tests/#{filename}.ll -o build/my_#{filename}.out"
+    sh "ruby build/grammar.racc.rb tests/#{filename}.c > build/#{filename}.ll"
+    sh "clang build/#{filename}.ll -o build/my_#{filename}.out 2> /dev/null"
     sh "./build/my_#{filename}.out" do |ok, res|
       my_ret = res.exitstatus #ENV['$?']
     end
-    sh "clang tests/#{filename}.c -o build/clang_#{filename}.out"
+    sh "clang tests/#{filename}.c -o build/clang_#{filename}.out 2> /dev/null"
     sh "./build/clang_#{filename}.out" do |ok, res|
       clang_ret = res.exitstatus #ENV['$?']
     end
@@ -54,9 +54,11 @@ task :tests => :build do
   end
 end
 
+=begin
 task :test_error_handling => :build do
   sh "ruby build/grammar.racc.rb tests/error_handling_test.c"
 end
+=end
 
 task :clean do
   sh 'rm -rf build'

@@ -18,3 +18,4 @@ int main() {
 
     return res % 256;
 }
+
