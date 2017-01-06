@@ -20,8 +20,7 @@ class InnerDeclaration
     @declarator_list.reduce('') do |acc, id|
       reg = scope.new_register(false)
       if id.is_a? Hash
-        scope.new_id(id[:id], reg, @type, id[:size])
-        acc + array_allocation("%#{reg}", id[:size]) #+ "store #{type} 0, #{type}* #{reg}\n"
+        acc + array_allocation(id[:id], "%#{reg}", id[:size], scope) #+ "store #{type} 0, #{type}* #{reg}\n"
       else
         scope.new_id(id, reg, @type)
         acc + allocation("%#{reg}")
@@ -63,9 +62,22 @@ class InnerDeclaration
     "  #{reg} = alloca #{llvm_type}\n"
   end
 
-  def array_allocation(reg, size)
+  def array_allocation(id, reg, size, scope)
     llvm_type = Type.to_llvm(@type)
-    "  #{reg} = alloca [#{size} x #{llvm_type}]\n"
+
+    size_code, size_reg = size.code(scope)
+    size_type = size.type(scope)
+
+    convert_code, convert_reg = Type.build_conversion(size_type, :long, size_reg, scope)
+    stack_reg = scope.new_register
+
+    array_reg = scope.new_register(false)
+    scope.new_id(id, array_reg, @type, size_reg)
+
+    "#{reg} = alloca i8*\n" + size_code + convert_code +
+        "store i8* #{stack_reg}, i8** #{reg}\n" +
+        "#{stack_reg} = call i8* @llvm.stacksave()\n" +
+        "%#{array_reg} = alloca #{llvm_type}, i64 #{convert_reg}\n"
   end
 
   def store(reg, expr_reg)

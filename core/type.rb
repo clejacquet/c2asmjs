@@ -106,6 +106,9 @@ module Type
       long: {
         llvm: 'i64'
       },
+      i8p: {
+          llvm: 'i8*'
+      },
       void: {
           llvm: 'void',
           policy: lambda { |value| raise StandardError, "On void.policy: Void cannot have a value #{value}" },

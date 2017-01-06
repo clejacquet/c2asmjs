@@ -7,6 +7,9 @@ class Main
   end
 
   def launch
+    @scanner.scope.declare_func('llvm.stacksave', :i8p, nil)
+    @scanner.scope.declare_func('llvm.stackrestore', :void, [:i8p])
+
     @scanner.scope.declare_func('background', :void, [:float])
     @scanner.scope.declare_func('fill', :void, [:float])
     @scanner.scope.declare_func('stroke', :void, [:float])

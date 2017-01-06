@@ -110,10 +110,11 @@ class Scanner
 
     declarator_list
     : IDENTIFIER                                        { [ val[0] ] }
-    | IDENTIFIER '[' CONSTANTI ']'                      { [{id: val[0], size: val[2]}] }
+    #| IDENTIFIER '[' CONSTANTI ']'                      { [{id: val[0], size: val[2]}] }
+    | IDENTIFIER '[' expression ']'                      { [{id: val[0], size: val[2]}] }
     | declarator_list ',' IDENTIFIER                    { val[0].push(val[2]) }
-    | declarator_list ',' IDENTIFIER '[' CONSTANTI ']'  { val[0].push({id: val[2], size: val[4]}) }
-    #| declarator_list ',' IDENTIFIER '[' expression ']'  { val[0].push({id: val[2], size: val[4]}) }
+    #| declarator_list ',' IDENTIFIER '[' CONSTANTI ']'  { val[0].push({id: val[2], size: val[4]}) }
+    | declarator_list ',' IDENTIFIER '[' expression ']'  { val[0].push({id: val[2], size: val[4]}) }
 
     type_name
     : VOID                                              { :void }

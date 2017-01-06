@@ -16,7 +16,7 @@ class ArrayElementExpr
 
     convert_code, convert_reg = Type.build_conversion(index_type, :long, index_reg, scope)
     reg = scope.new_register
-    return index_code + convert_code + "#{reg} = getelementptr inbounds [#{size} x #{llvm_type}], [#{size} x #{llvm_type}]* #{array_reg}, i64 0, i64 #{convert_reg}\n", reg
+    return index_code + convert_code + "#{reg} = getelementptr inbounds #{llvm_type}, #{llvm_type}* #{array_reg}, i64 #{convert_reg}\n", reg
   end
 
   def code(scope)

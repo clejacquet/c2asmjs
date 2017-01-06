@@ -44,13 +44,15 @@ class GlobalScope < Scope
     end + "\n"
 
     functions_code = @function_declarations.reduce('') do |acc, declaration|
-      args_type = declaration[:args_type].map do |arg_type|
-        if arg_type.is_a? Symbol
-          Type.to_llvm(arg_type)
-        else
-          arg_type.to_s
-        end
-      end.join(', ')
+      if declaration[:args_type]
+        args_type = declaration[:args_type].map do |arg_type|
+          if arg_type.is_a? Symbol
+            Type.to_llvm(arg_type)
+          else
+            arg_type.to_s
+          end
+        end.join(', ')
+      end
 
       if declaration[:type].is_a? Symbol
         type = Type.to_llvm(declaration[:type])
