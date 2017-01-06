@@ -332,15 +332,18 @@ module Type
   CONVERSIONS = {
       integer: [
           :float,
-          :boolean
+          :boolean,
+          :long
       ],
       float: [
           :integer,
-          :boolean
+          :boolean,
+          :long
       ],
       boolean: [
           :integer,
-          :float
+          :float,
+          :long
       ]
   }
 
@@ -359,7 +362,8 @@ module Type
       },
       boolean: {
           integer: 'zext',
-          float: 'sitofp'
+          float: 'sitofp',
+          long: 'zext'
       }
   }
 

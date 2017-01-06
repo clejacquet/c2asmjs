@@ -1,9 +1,9 @@
 int main() {
-    int a = 1;
-    int b = -1;
-    float c = 3.4;
-    b >> 3;
-    3 << 10;
-    3.4 << 5;
-    return a << 10;
+    int a = 2;
+    int b = -2;
+
+    b = b >> 1;
+    a = a << 1;
+
+    return (a + b) << 2;
 }

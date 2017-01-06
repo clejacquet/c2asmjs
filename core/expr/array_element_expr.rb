@@ -32,4 +32,8 @@ class ArrayElementExpr
   def type(scope)
     scope.get_type(@array_id)
   end
+
+  def try_eval
+    raise IdEvalAtCompilationError.new(@array_id)
+  end
 end
