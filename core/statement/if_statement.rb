@@ -1,4 +1,5 @@
 require_relative('../../core/expr/constant_expr/constant_i_expr')
+require_relative('../error/language_error')
 
 class IfStatement
   def initialize(expr, statement, else_statement = nil)
@@ -18,7 +19,7 @@ class IfStatement
       else
         code_only_else(scope)
       end
-    rescue StandardError
+    rescue LanguageError
       if expr_type != :boolean
         expr_code, expr_val = NeExpr.new(@expr, ConstantIExpr.new(0)).code(scope)
       else

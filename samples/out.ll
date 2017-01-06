@@ -26,37 +26,21 @@ define void @print_double(double %d) {
 }
 
 
-define i32 @abc(i32 %c) {
-  %1 = alloca i32
-  store i32 %c, i32* %1
-  %2 = load i32, i32* %1
-  %3 = add i32 %2, 1
-  ret i32 %3
-}
-
 define i32 @main() {
-  %1 = alloca i32
-  store i32 8, i32* %1
-  %2 = alloca i32
-  store i32 8, i32* %2
-  %3 = alloca double
-  store double 8.550000e+01, double* %3
-  %4 = load i32, i32* %2
-  call void @print_int(i32 %4)
-  %5 = load i32, i32* %1
-  %6 = add i32 %5, 3
-  call void @print_int(i32 %6)
-  %7 = load double, double* %3
-  %8 = fptosi double %7 to i32
-  call void @print_int(i32 %8)
-  %9 = load double, double* %3
-  call void @print_double(double %9)
-  %10 = load i32, i32* %1
-  %11 = sitofp i32 %10 to double
-  call void @print_double(double %11)
-  %12 = load i32, i32* %1
-  %13 = load i32, i32* %2
-  %14 = add i32 %12, %13
-  %15 = call i32 @abc(i32 %14)
-  ret i32 %15
+  %1 = alloca [3 x i32]
+  %2 = add i32 0, 5
+  %3 = add i32 0, 2
+  %4 = sext i32 %3 to i64
+  %5 = getelementptr inbounds [3 x i32], [3 x i32]* %1, i64 0, i64 %4
+  store i32 %2, i32* %5
+  %6 = add i32 0, 4
+  %7 = add i32 0, 1
+  %8 = sext i32 %7 to i64
+  %9 = getelementptr inbounds [3 x i32], [3 x i32]* %1, i64 0, i64 %8
+  store i32 %6, i32* %9
+  %10 = add i32 0, 1
+  %11 = sext i32 %10 to i64
+  %12 = getelementptr inbounds [3 x i32], [3 x i32]* %1, i64 0, i64 %11
+  %13 = load i32, i32* %12
+  ret i32 %13
 }

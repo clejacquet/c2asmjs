@@ -1,4 +1,5 @@
 require_relative('definition/function_definition')
+require_relative('error/language_error')
 
 class Main
   def initialize(scanner)
@@ -36,11 +37,7 @@ class Main
       begin
         code = @scanner.scan_file ARGV[0]
         puts code
-      rescue AlreadyDefinedError => msg
-        STDERR.puts msg
-      rescue IdentifierNotDefinedError => msg
-        STDERR.puts msg
-      rescue StandardError => msg
+      rescue LanguageError => msg
         STDERR.puts msg
       end
     else

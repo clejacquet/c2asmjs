@@ -2,6 +2,7 @@ require_relative('../type')
 require_relative('../function_scope')
 require_relative('../identifier_table')
 require_relative('inner_declaration')
+require_relative('../error/missing_return_error')
 
 class Function
   attr_reader :type
@@ -37,7 +38,16 @@ class Function
 
     statements_code = arg_declarations + @compound_statement.code(@scope)
 
-    return_code = (@scope.get_jump_done != :return) ? "  ret void\n" : ''
+    if @scope.get_jump_done != :return
+      if @type == :void
+        return_code = "  ret void\n"
+      else
+        raise MissingReturnError.new(@type, @id)
+      end
+    else
+      return_code = ''
+    end
+
     statements_code += return_code
 
     "\ndefine #{Type.to_llvm(@type)} @#{@id}(#{args_str}) {\n#{statements_code}}\n"

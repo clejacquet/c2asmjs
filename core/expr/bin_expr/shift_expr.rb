@@ -1,4 +1,5 @@
 require_relative('bin_expr')
+require_relative('../../error/non_integer_expr_shift_error')
 
 class ShiftExpr < BinExpr
   def code(scope)
@@ -6,7 +7,7 @@ class ShiftExpr < BinExpr
     r_expr_type = @expr2.type(scope)
 
     if l_expr_type != :integer or r_expr_type != :integer
-      raise StandardError.new('trying to shift non integer expressions')
+      raise NonIntegerExprShiftError
     end
 
     l_expr_code, l_expr_type, l_expr_val = try_optimize(@expr1, :integer, :integer, scope)

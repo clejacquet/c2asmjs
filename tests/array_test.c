@@ -15,5 +15,5 @@ int main() {
         res += farray[j];
     }
 
-    return res%256;
+    return res % 256;
 }

@@ -45,7 +45,7 @@ class InnerDeclaration
       expr_val = @value[:reg]
       expr_type = @value[:type]
     else
-      raise StandardError("Not a valid mode '#{@mode.to_s}'")
+      raise StandardError, "Not a valid mode '#{@mode.to_s}'"
     end
 
     alloc_code = @declarator_list.reduce('') do |acc, id|

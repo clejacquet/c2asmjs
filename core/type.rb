@@ -1,3 +1,5 @@
+require_relative('error/unknown_conversion_error')
+
 module Type
 
   ##
@@ -44,14 +46,21 @@ module Type
 
   ##
   # Converts +val+ from +src_type+ to +dst_type+
-  def Type.convert(type_src, type_dst, val)
-    CONVERSION_FUNCTIONS[type_src][type_dst].call val
+  def Type.convert(src_type, dst_type, val)
+    if CONVERSIONS[src_type].nil? or not CONVERSIONS[src_type].include? dst_type
+      raise UnknownConversionError.new(src_type, dst_type)
+    end
+    CONVERSION_FUNCTIONS[src_type][dst_type].call val
   end
 
   ##
   # Build a llvm conversion instruction to converts +val+ from +src_type+ to +dst_type+
   # +val+ can be either a constant value, or a register (starting with "%")
   def Type.llvm_conversion_instruction(src_type, dst_type, val)
+    if CONVERSIONS[src_type].nil? or not CONVERSIONS[src_type].include? dst_type
+      raise UnknownConversionError.new(src_type, dst_type)
+    end
+
     src_type_llvm = Type.to_llvm(src_type)
     dst_type_llvm = Type.to_llvm(dst_type)
     val_llvm = (not val.to_s.start_with?('%')) ? Type.val_to_llvm(src_type, val) : val
@@ -99,8 +108,8 @@ module Type
       },
       void: {
           llvm: 'void',
-          policy: lambda { |value| raise StandardError("On void.policy: Void cannot have a value #{value}") },
-          to_str: lambda { |value| raise StandardError("On void.to_str: Void cannot have a value #{value}") },
+          policy: lambda { |value| raise StandardError, "On void.policy: Void cannot have a value #{value}" },
+          to_str: lambda { |value| raise StandardError, "On void.to_str: Void cannot have a value #{value}" },
       }
   }
 
@@ -316,6 +325,23 @@ module Type
               default: :boolean
           }
       }
+  }
+
+  ##
+  # Authorized conversions
+  CONVERSIONS = {
+      integer: [
+          :float,
+          :boolean
+      ],
+      float: [
+          :integer,
+          :boolean
+      ],
+      boolean: [
+          :integer,
+          :float
+      ]
   }
 
   ##
