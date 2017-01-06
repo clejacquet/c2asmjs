@@ -22,14 +22,35 @@ task :build do
   sh 'racc grammar.racc -o build/grammar.racc.rb'
 end
 
-task :run, [:file] => [:build] do |t, args|
+task :compile, [:file] => [:build] do |t, args|
   ruby "build/grammar.racc.rb #{args.file}"
 end
 
-task :test, [:file] => [:build] do |t, args|
+task :run, [:file] => [:build] do |t, args|
   sh "ruby build/grammar.racc.rb #{args.file} > build/out.ll"
   sh 'clang build/out.ll -target x86_64-unknown-linux-gnu -o build/out'
   sh 'build/out; echo $? 1>&2'
+end
+
+task :test, [:file] => :build do |t, args|
+  my_ret = -1
+  clang_ret = -1
+  filename = args.file
+
+  sh "ruby build/grammar.racc.rb #{filename} > build/out.ll"
+  sh 'clang build/out.ll -o build/my_test.out'
+  sh "./build/my_test.out" do |ok, res|
+    my_ret = res.exitstatus #ENV['$?']
+  end
+  sh "clang #{filename} -o build/clang_test.out "
+  sh "./build/clang_test.out" do |ok, res|
+    clang_ret = res.exitstatus #ENV['$?']
+  end
+  if my_ret != clang_ret
+    puts("Test #{filename} failed : clang returns #{clang_ret}, got #{my_ret}\n")
+  else
+    puts("Test #{filename} succeeded : both returned #{my_ret}\n")
+  end
 end
 
 task :tests => :build do
