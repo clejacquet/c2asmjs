@@ -7,12 +7,12 @@ int main() {
     int j = array_length-1;
     int res = 0;
 
-    for (i = 0; i < array_length; i++) {
+    for (i; i < array_length; i++) {
         array[i] = (i+1)*(i+1.0);
         farray[i] = 0.24 * array[i];
     }
 
-    for (j = 0; j >= 0; j--) {
+    for (j; j >= 0; j--) {
         res += farray[j];
     }
 

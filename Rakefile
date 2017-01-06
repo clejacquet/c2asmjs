@@ -28,7 +28,7 @@ end
 
 task :run, [:file] => [:build] do |t, args|
   sh "ruby build/grammar.racc.rb #{args.file} > build/out.ll"
-  sh 'clang build/out.ll -target x86_64-unknown-linux-gnu -o build/out'
+  sh 'clang build/out.ll -target x86_64-unknown-linux-gnu -o build/out 2> /dev/null'
   sh 'build/out; echo $? 1>&2'
 end
 
