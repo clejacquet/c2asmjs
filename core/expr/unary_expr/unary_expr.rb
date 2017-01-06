@@ -1,3 +1,5 @@
+require_relative('../../error/language_error')
+
 class UnaryExpr
   def initialize(expr)
     @expr = expr
@@ -9,7 +11,7 @@ class UnaryExpr
     begin
       expr_val = Type.val_to_llvm(expr_type, @expr.try_eval)
       expr_code = ''
-    rescue StandardError
+    rescue LanguageError
       expr_code, expr_val = @expr.code(scope)
     end
 

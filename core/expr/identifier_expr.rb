@@ -14,7 +14,7 @@ class IdentifierExpr
   end
 
   def try_eval
-    raise StandardError('Cannot eval an identifier at compilation time')
+    raise IdEvalAtCompilationError.new(@id)
   end
 
   def type(scope)

@@ -1,3 +1,5 @@
+require_relative('../../error/id_eval_at_compilation_error')
+
 class AssignmentExpr
   def initialize(id, expr)
     @id = id
@@ -24,7 +26,7 @@ class AssignmentExpr
   end
 
   def try_eval
-    raise StandardError('Cannot eval assignment at compilation time')
+    raise IdEvalAtCompilationError.new(@id)
   end
 
   def type(scope)

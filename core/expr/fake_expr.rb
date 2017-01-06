@@ -1,3 +1,5 @@
+require_relative('../error/fake_expression_eval_error')
+
 class FakeExpr
   def initialize(code, val, type)
     @code = code
@@ -14,6 +16,6 @@ class FakeExpr
   end
 
   def try_eval
-    raise StandardError, 'Fake expression isn\'t evaluable'
+    raise FakeExpressionEvalError
   end
 end

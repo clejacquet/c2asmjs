@@ -1,3 +1,6 @@
+require_relative('../error/id_eval_at_compilation_error')
+require_relative('../error/language_error')
+
 class FunctionCallExpr
   def initialize(id, args = Array.new)
     @id = id
@@ -19,7 +22,7 @@ class FunctionCallExpr
       begin
         arg_expr_val = Type.val_to_llvm(arg_type, @args[arg_id].try_eval)
         arg_expr_code = ''
-      rescue StandardError
+      rescue LanguageError
         arg_expr_code, arg_expr_val = @args[arg_id].code(scope)
         arg_conversion_code, arg_expr_val = Type.build_conversion(arg_expr_type, arg_type, arg_expr_val, scope)
         arg_expr_code += arg_conversion_code
@@ -42,7 +45,7 @@ class FunctionCallExpr
   end
 
   def try_eval
-    raise StandardError('Cannot eval a function call at compilation time')
+    raise IdEvalAtCompilationError.new(@id)
   end
 
   def type(scope)

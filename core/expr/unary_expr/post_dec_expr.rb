@@ -1,10 +1,11 @@
 require_relative('../identifier_expr')
 require_relative('../fake_expr')
 require_relative('../bin_expr/sub_expr')
+require_relative('../../error/expression_not_assignable_error')
 
 class PostDecExpr < IdentifierExpr
   def initialize(expr)
-    raise StandardError, 'expression is not assignable' unless expr.is_a? IdentifierExpr
+    raise ExpressionNotAssignableError unless expr.is_a? IdentifierExpr
     super(expr.id)
     @expr = expr
   end

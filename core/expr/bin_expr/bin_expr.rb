@@ -1,3 +1,5 @@
+require_relative('../../error/language_error')
+
 class BinExpr
   def initialize(expr1, expr2)
     @expr1 = expr1
@@ -57,7 +59,7 @@ class BinExpr
       end
       expr_val = Type.val_to_llvm(expr_type, expr_val)
       expr_code = ''
-    rescue StandardError
+    rescue LanguageError
       expr_code, expr_val = expr.code(scope)
     end
     return expr_code, expr_type, expr_val

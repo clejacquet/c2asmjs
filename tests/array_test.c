@@ -13,5 +13,5 @@ int main() {
         res += array[j];
     }
 
-    return res%256;
+    return res % 256;
 }

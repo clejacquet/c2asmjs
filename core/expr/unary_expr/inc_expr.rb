@@ -1,11 +1,12 @@
 require_relative('unary_expr')
 require_relative('../identifier_expr')
 require_relative('../assignment_expr/add_assignment_expr')
-require_relative('../../../core/expr/bin_expr/add_expr')
+require_relative('../bin_expr/add_expr')
+require_relative('../../error/expression_not_assignable_error')
 
 class IncExpr < IdentifierExpr
   def initialize(expr)
-    raise StandardError, 'expression is not assignable' unless expr.is_a? IdentifierExpr
+    raise ExpressionNotAssignableError unless expr.is_a? IdentifierExpr
     @expr = expr
     super (@expr.id)
   end
