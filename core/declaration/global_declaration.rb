@@ -1,5 +1,5 @@
 class GlobalDeclaration
-  def initialize(type, declarator_list, expr = nil)
+  def initialize(type, declarator_list, expr)
     @declarator_list = declarator_list
     @type = type
     @expr = expr

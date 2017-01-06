@@ -1,10 +1,18 @@
-tests = [
-    'array_test',
-    'unary_test',
-    'comp_test',
-    'cond_test',
-    'shift_test'
-]
+tests =
+    %w(array_test
+       unary_test
+       comp_test
+       cond_test
+       shift_test
+    )
+
+=begin Tests d'erreur de compilation
+errors/already_defined_error
+errors/identifier_not_defined_error
+errors/missing_return_value
+errors/non_integer_shift
+errors/unknown_conversion
+=end
 
 task default: :build
 

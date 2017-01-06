@@ -8,8 +8,8 @@ class IdentifierTable
     @table = Hash.new
   end
 
-  def add_id(id, reg, type, line_num=-1, size=nil)
-    raise AlreadyDefinedError.new(id, line_num) if @table.has_key? id.to_sym
+  def add_id(id, reg, type, size=nil)
+    raise AlreadyDefinedError.new(id) if @table.has_key? id.to_sym
 
     @table[id.to_sym] = {
         type: type,
@@ -21,24 +21,24 @@ class IdentifierTable
     id
   end
 
-  def get_type(id, line_num=-1)
-    check_identifier_definition(id, line_num)
+  def get_type(id)
+    check_identifier_definition(id)
 
     @table[id.to_sym][:type]
   end
 
-  def get_reg(id, line_num=-1)
-    check_identifier_definition(id, line_num)
+  def get_reg(id)
+    check_identifier_definition(id)
 
     @table[id.to_sym][:reg]
   end
 
-  def check_identifier_definition(id, line_num)
-    raise IdentifierNotDefinedError.new(id.to_sym, line_num) unless @table.has_key? id.to_sym
+  def check_identifier_definition(id)
+    raise IdentifierNotDefinedError.new(id.to_sym) unless @table.has_key? id.to_sym
   end
 
-  def get_array_size(id, line_num=-1)
-    check_identifier_definition(id, line_num)
+  def get_array_size(id)
+    check_identifier_definition(id)
 
     @table[id.to_sym][:size]
   end
@@ -48,7 +48,7 @@ class IdentifierTable
   end
 
 
-  def check_id(id, line_num=-1)
-    raise IdentifierNotDefinedError.new(id.to_sym, line_num) unless has_id?(id)
+  def check_id(id)
+    raise IdentifierNotDefinedError.new(id.to_sym) unless has_id?(id)
   end
 end

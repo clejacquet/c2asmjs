@@ -1,4 +1,4 @@
-require_relative('../inner_scope')
+require_relative('../scope/inner_scope')
 
 class CompoundStatement
   def initialize(statements)
@@ -11,6 +11,7 @@ class CompoundStatement
     @compound_statement.reduce('') do |acc, statement|
       if statement
         statement_code = statement.code(inner_scope)
+
         if statement_code.is_a? Array
           statement_code = statement_code[0]
         end

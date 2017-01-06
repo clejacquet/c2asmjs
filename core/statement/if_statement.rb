@@ -1,11 +1,12 @@
 require_relative('../../core/expr/constant_expr/constant_i_expr')
-require_relative('../error/language_error')
+require_relative('../error/id_eval_at_compilation_error')
 
 class IfStatement
-  def initialize(expr, statement, else_statement = nil)
+  def initialize(expr, statement, else_statement, lineno)
     @expr = expr
     @statement = statement
     @else_statement = else_statement
+    @lineno = lineno
   end
 
   def code(scope)
@@ -19,9 +20,9 @@ class IfStatement
       else
         code_only_else(scope)
       end
-    rescue LanguageError
+    rescue IdEvalAtCompilationError, FakeExpressionEvalError
       if expr_type != :boolean
-        expr_code, expr_val = NeExpr.new(@expr, ConstantIExpr.new(0)).code(scope)
+        expr_code, expr_val = NeExpr.new(@expr, ConstantIExpr.new(0), @lineno).code(scope)
       else
         expr_code, expr_val = @expr.code(scope)
       end

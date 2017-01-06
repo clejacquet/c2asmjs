@@ -1,5 +1,7 @@
+require_relative('../error/id_eval_at_compilation_error')
+
 class Return
-  def initialize(expr = nil)
+  def initialize(expr)
     @value = expr
   end
 
@@ -18,7 +20,7 @@ class Return
         end
         expr_val = Type.val_to_llvm(expr_type, expr_val)
         expr_code = ''
-      rescue LanguageError
+      rescue IdEvalAtCompilationError, FakeExpressionEvalError
         expr_code, expr_val = @value.code(scope)
       end
 

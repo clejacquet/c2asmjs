@@ -1,10 +1,12 @@
 require_relative('../error/id_eval_at_compilation_error')
+require_relative('../error/not_matching_args_count_error')
 require_relative('../error/language_error')
 
 class FunctionCallExpr
-  def initialize(id, args = Array.new)
+  def initialize(id, args, lineno)
     @id = id
     @args = args
+    @lineno = lineno
   end
 
   def code(scope)
@@ -15,6 +17,11 @@ class FunctionCallExpr
     arg_expr_codes = Array.new
     arg_final_exprs = Array.new
 
+    if @args.length != args_type.length
+      ErrorHandler.instance.register_error(msg: NotMatchingArgsCountError.new(@args.length, args_type.length), lineno: @lineno)
+      return '', ''
+    end
+
     @args.each_index do |arg_id|
       arg_type = args_type[arg_id]
       arg_expr_type = @args[arg_id].type(scope)
@@ -22,8 +29,14 @@ class FunctionCallExpr
       begin
         arg_expr_val = Type.val_to_llvm(arg_type, @args[arg_id].try_eval)
         arg_expr_code = ''
-      rescue LanguageError
-        arg_expr_code, arg_expr_val = @args[arg_id].code(scope)
+      rescue IdEvalAtCompilationError, FakeExpressionEvalError
+        begin
+          arg_expr_code, arg_expr_val = @args[arg_id].code(scope)
+        rescue LanguageError => msg
+          ErrorHandler.instance.register_error(msg: msg, lineno: @lineno)
+          return '', ''
+        end
+
         arg_conversion_code, arg_expr_val = Type.build_conversion(arg_expr_type, arg_type, arg_expr_val, scope)
         arg_expr_code += arg_conversion_code
       end
@@ -49,6 +62,10 @@ class FunctionCallExpr
   end
 
   def type(scope)
-    scope.get_type(@id)[:return]
+    begin
+      scope.get_type(@id)[:return]
+    rescue
+      :error
+    end
   end
 end

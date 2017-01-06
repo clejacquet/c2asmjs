@@ -1,8 +1,9 @@
 class WhileStatement
-  def initialize(cond_expr, statement, step = nil)
-      @cond_expr = cond_expr
-      @statement = statement
-      @step = step
+  def initialize(cond_expr, statement, step, lineno)
+    @cond_expr = cond_expr
+    @statement = statement
+    @step = step
+    @lineno = lineno
   end
 
   def code(scope)
@@ -12,7 +13,7 @@ class WhileStatement
 
     cond_expr_type = @cond_expr.type(scope)
     if cond_expr_type != :boolean
-      cond_expr_code, cond_expr_val = NeExpr.new(@cond_expr, ConstantIExpr.new(0)).code(scope)
+      cond_expr_code, cond_expr_val = NeExpr.new(@cond_expr, ConstantIExpr.new(0), @lineno).code(scope)
     else
       cond_expr_code, cond_expr_val = @cond_expr.code(scope)
     end

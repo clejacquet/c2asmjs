@@ -1,16 +1,17 @@
-require_relative('../type')
-require_relative('../function_scope')
-require_relative('../identifier_table')
-require_relative('inner_declaration')
-require_relative('../error/missing_return_error')
+require_relative('type')
+require_relative('scope/function_scope')
+require_relative('identifier_table')
+require_relative('declaration/inner_declaration')
+require_relative('error/missing_return_error')
 
 class Function
   attr_reader :type
 
-  def initialize(type, decl, compound_statement)
+  def initialize(type, decl, compound_statement, lineno)
     @type = type
     @id = decl[:id]
     @compound_statement = compound_statement
+    @lineno = lineno
 
     args = decl[:args]
     if args.nil?
@@ -21,7 +22,12 @@ class Function
   end
 
   def code(gscope)
-    gscope.new_id(@id, nil, { return: @type, args: @args.map { |arg| arg[:type] }})
+    begin
+      gscope.new_id(@id, nil, { return: @type, args: @args.map { |arg| arg[:type] }})
+    rescue AlreadyDefinedError => msg
+      ErrorHandler.instance.register_error(msg: msg, lineno: @lineno)
+    end
+
     @scope = FunctionScope.new(IdentifierTable.new, gscope, self)
 
     arg_regs = @args.map do |arg|
@@ -42,7 +48,8 @@ class Function
       if @type == :void
         return_code = "  ret void\n"
       else
-        raise MissingReturnError.new(@type, @id)
+        ErrorHandler.instance.register_error(msg: MissingReturnError.new(@type, @id).message, lineno: @lineno)
+        return ''
       end
     else
       return_code = ''

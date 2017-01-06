@@ -1,3 +1,5 @@
+require_relative('../fake_expr')
+
 class ConstantExpr
   def initialize(val)
     @val = val
@@ -22,8 +24,10 @@ class ConstantExpr
         ConstantBExpr.new(val)
       when :integer
         ConstantIExpr.new(val)
-      else
+      when :float
         ConstantFExpr.new(val)
+      else
+        FakeExpr.new('', '', :error)
     end
   end
 end

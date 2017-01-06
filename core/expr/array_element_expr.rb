@@ -1,7 +1,8 @@
 class ArrayElementExpr
-  def initialize(array_id, index)
+  def initialize(array_id, index, lineno)
     @array_id = array_id
     @index = index
+    @lineno = lineno
   end
 
   def get_element_code(type, scope)
@@ -16,7 +17,7 @@ class ArrayElementExpr
 
     convert_code, convert_reg = Type.build_conversion(index_type, :long, index_reg, scope)
     reg = scope.new_register
-    return index_code + convert_code + "#{reg} = getelementptr inbounds #{llvm_type}, #{llvm_type}* #{array_reg}, i64 #{convert_reg}\n", reg
+    return index_code + convert_code + "  #{reg} = getelementptr inbounds #{llvm_type}, #{llvm_type}* #{array_reg}, i64 #{convert_reg}\n", reg
   end
 
   def code(scope)
@@ -25,7 +26,7 @@ class ArrayElementExpr
     total_code, element_reg = get_element_code(type, scope)
     load_reg = scope.new_register
     return total_code +
-             "#{load_reg} = load #{llvm_type}, #{llvm_type}* #{element_reg}\n",
+             "  #{load_reg} = load #{llvm_type}, #{llvm_type}* #{element_reg}\n",
            load_reg
   end
 

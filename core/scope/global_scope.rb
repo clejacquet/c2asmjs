@@ -10,7 +10,7 @@ class GlobalScope < Scope
 
   def get_type(id)
     unless @id_table.has_id?(id)
-      raise IdentifierNotDefinedError.new(id.to_sym, -1)
+      raise IdentifierNotDefinedError.new(id.to_sym)
     end
 
     @id_table.get_type(id)
@@ -18,7 +18,7 @@ class GlobalScope < Scope
 
   def get_reg(id)
     unless @id_table.has_id?(id)
-      raise IdentifierNotDefinedError.new(id.to_sym, -1)
+      raise IdentifierNotDefinedError.new(id.to_sym)
     end
 
     "@#{id}"

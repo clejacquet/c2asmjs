@@ -1,7 +1,8 @@
 class DoWhileStatement
-  def initialize(cond_expr, statement)
+  def initialize(cond_expr, statement, lineno)
     @cond_expr = cond_expr
     @statement = statement
+    @lineno = lineno
   end
 
   def code(scope)
@@ -21,7 +22,7 @@ class DoWhileStatement
     cond_expr_type = @cond_expr.type(scope)
 
     if cond_expr_type != :boolean
-      cond_expr_code, cond_expr_val = NeExpr.new(@cond_expr, ConstantIExpr.new(0)).code(scope)
+      cond_expr_code, cond_expr_val = NeExpr.new(@cond_expr, ConstantIExpr.new(0), @lineno).code(scope)
     else
       cond_expr_code, cond_expr_val = @cond_expr.code(scope)
     end

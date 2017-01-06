@@ -1,8 +1,9 @@
 class IdentifierExpr
   attr_reader :id
 
-  def initialize(id)
+  def initialize(id, lineno)
     @id = id
+    @lineno = lineno
   end
 
   def code(scope)
@@ -18,6 +19,10 @@ class IdentifierExpr
   end
 
   def type(scope)
-    scope.get_type(@id)
+    begin
+      scope.get_type(@id)
+    rescue
+      :error
+    end
   end
 end

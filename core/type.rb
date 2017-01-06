@@ -104,7 +104,8 @@ module Type
           to_str: lambda { |value| (value != 0 or value == true) ? 'true' : 'false' }
       },
       long: {
-        llvm: 'i64'
+        llvm: 'i64',
+        policy: lambda { |value| }
       },
       i8p: {
           llvm: 'i8*'
@@ -113,6 +114,11 @@ module Type
           llvm: 'void',
           policy: lambda { |value| raise StandardError, "On void.policy: Void cannot have a value #{value}" },
           to_str: lambda { |value| raise StandardError, "On void.to_str: Void cannot have a value #{value}" },
+      },
+      error: {
+          llvm: '',
+          policy: lambda { |value| },
+          to_str: lambda { |value| ''}
       }
   }
 
@@ -123,88 +129,106 @@ module Type
       '+': {
           boolean: 'add',
           integer: 'add',
-          float: 'fadd'
+          float: 'fadd',
+          error: ''
       },
       '-': {
           boolean: 'sub',
           integer: 'sub',
-          float: 'fsub'
+          float: 'fsub',
+          error: ''
       },
       '*': {
           boolean: 'mul',
           integer: 'mul',
-          float: 'fmul'
+          float: 'fmul',
+          error: ''
       },
       '/': {
           boolean: 'sdiv',
           integer: 'sdiv',
-          float: 'fdiv'
+          float: 'fdiv',
+          error: ''
       },
       REM: {
           boolean: 'srem',
           integer: 'srem',
-          float: 'frem'
+          float: 'frem',
+          error: ''
       },
       '<': {
           boolean: 'icmp slt',
           integer: 'icmp slt',
-          float: 'fcmp olt'
+          float: 'fcmp olt',
+          error: ''
       },
       '>': {
           boolean: 'icmp sgt',
           integer: 'icmp sgt',
-          float: 'fcmp ogt'
+          float: 'fcmp ogt',
+          error: ''
       },
       LE_OP: {
           boolean: 'icmp sle',
           integer: 'icmp sle',
-          float: 'fcmp ole'
+          float: 'fcmp ole',
+          error: ''
       },
       GE_OP: {
           boolean: 'icmp sge',
           integer: 'icmp sge',
-          float: 'fcmp oge'
+          float: 'fcmp oge',
+          error: ''
       },
       EQ_OP: {
           boolean: 'icmp eq',
           integer: 'icmp eq',
-          float: 'fcmp oeq'
+          float: 'fcmp oeq',
+          error: ''
       },
       NE_OP: {
           boolean: 'icmp ne',
           integer: 'icmp ne',
-          float: 'fcmp one'
+          float: 'fcmp one',
+          error: ''
       },
       INC_OP: {
           boolean: 'add',
           integer: 'add',
-          float: 'fadd'
+          float: 'fadd',
+          error: ''
       },
       DEC_OP: {
           boolean: 'sub',
           integer: 'sub',
-          float: 'fsub'
+          float: 'fsub',
+          error: ''
       },
       AND: {
           boolean: 'icmp ne',
           integer: 'icmp ne',
-          float: 'fcmp one'
+          float: 'fcmp one',
+          error: ''
       },
       OR: {
           boolean: 'icmp ne',
           integer: 'icmp ne',
-          float: 'fcmp one'
+          float: 'fcmp one',
+          error: ''
       },
       '!': {
           boolean: 'xor',
           integer: 'xor',
-          float: 'xor'
+          float: 'xor',
+          error: ''
       },
       SHL: {
-          integer: 'shl'
+          integer: 'shl',
+          error: ''
       },
       SHR: {
-          integer: 'ashr'
+          integer: 'ashr',
+          error: ''
       }
   }
 
@@ -216,78 +240,94 @@ module Type
       '+': {
           boolean: :boolean,
           integer: :integer,
-          float: :float
+          float: :float,
+          error: :error
       },
       '-': {
           boolean: :boolean,
           integer: :integer,
-          float: :float
+          float: :float,
+          error: :error
       },
       '*': {
           boolean: :boolean,
           integer: :integer,
-          float: :float
+          float: :float,
+          error: :error
       },
       '/': {
           boolean: :boolean,
           integer: :integer,
-          float: :float
+          float: :float,
+          error: :error
       },
       REM: {
           boolean: :boolean,
           integer: :integer,
-          float: :float
+          float: :float,
+          error: :error
       },
       '<': {
           boolean: :boolean,
           integer: :boolean,
-          float: :boolean
+          float: :boolean,
+          error: :error
       },
       '>': {
           boolean: :boolean,
           integer: :boolean,
-          float: :boolean
+          float: :boolean,
+          error: :error
       },
       LE_OP: {
           boolean: :boolean,
           integer: :boolean,
-          float: :boolean
+          float: :boolean,
+          error: :error
       },
       GE_OP: {
           boolean: :boolean,
           integer: :boolean,
-          float: :boolean
+          float: :boolean,
+          error: :error
       },
       EQ_OP: {
           boolean: :boolean,
           integer: :boolean,
-          float: :boolean
+          float: :boolean,
+          error: :error
       },
       NE_OP: {
           boolean: :boolean,
           integer: :boolean,
-          float: :boolean
+          float: :boolean,
+          error: :error
       },
       AND: {
           boolean: :boolean,
           integer: :boolean,
-          float: :boolean
+          float: :boolean,
+          error: :error
       },
       OR: {
           boolean: :boolean,
           integer: :boolean,
-          float: :boolean
+          float: :boolean,
+          error: :error
       },
       '!': {
           boolean: :boolean,
           integer: :boolean,
-          float: :boolean
+          float: :boolean,
+          error: :error
       },
       SHL: {
-          integer: :integer
+          integer: :integer,
+          error: :error
       },
       SHR: {
-          integer: :integer
+          integer: :integer,
+          error: :error
       }
   }
 
@@ -304,6 +344,9 @@ module Type
           },
           boolean: {
               default: :integer
+          },
+          error: {
+              default: :error
           }
       },
       float: {
@@ -315,6 +358,9 @@ module Type
           },
           boolean: {
               default: :float
+          },
+          error: {
+              default: :error
           }
       },
       boolean: {
@@ -326,6 +372,23 @@ module Type
           },
           boolean: {
               default: :boolean
+          },
+          error: {
+              default: :error
+          }
+      },
+      error: {
+          integer: {
+              default: :error
+          },
+          float: {
+              default: :error
+          },
+          boolean: {
+              default: :error
+          },
+          error: {
+              default: :error
           }
       }
   }
@@ -336,16 +399,25 @@ module Type
       integer: [
           :float,
           :boolean,
-          :long
+          :long,
+          :error
       ],
       float: [
           :integer,
           :boolean,
-          :long
+          :long,
+          :error
       ],
       boolean: [
           :integer,
           :float,
+          :long,
+          :error
+      ],
+      error: [
+          :integer,
+          :float,
+          :boolean,
           :long
       ]
   }
@@ -356,17 +428,26 @@ module Type
       integer: {
           float: 'sitofp',
           boolean: 'zext',
-          long: 'sext'
+          long: 'sext',
+          error: ''
       },
       float: {
           integer: 'fptosi',
           boolean: 'fptosi',
-          long: 'fptosi'
+          long: 'fptosi',
+          error: ''
       },
       boolean: {
           integer: 'zext',
           float: 'sitofp',
-          long: 'zext'
+          long: 'zext',
+          error: ''
+      },
+      error: {
+          integer: '',
+          float: '',
+          long: '',
+          boolean: ''
       }
   }
 
@@ -375,15 +456,23 @@ module Type
   CONVERSION_FUNCTIONS = {
       integer: {
           float: lambda { |val| val },
-          boolean: lambda { |val| (val != 0) ? 1 : 0 }
+          boolean: lambda { |val| (val != 0) ? 1 : 0 },
+          error: lambda { |val| nil }
       },
       float: {
           integer: lambda { |val| val.floor },
-          boolean: lambda { |val| (val != 0) ? 1 : 0 }
+          boolean: lambda { |val| (val != 0) ? 1 : 0 },
+          error: lambda { |val| nil }
       },
       boolean: {
           integer: lambda { |val| val },
-          float: lambda { |val| val }
+          float: lambda { |val| val },
+          error: lambda { |val| nil }
+      },
+      error: {
+          integer: lambda { |val| nil },
+          float: lambda { |val| nil },
+          boolean: lambda { |val| nil }
       }
   }
 end

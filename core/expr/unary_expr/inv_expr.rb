@@ -10,7 +10,7 @@ class InvExpr < UnaryExpr
   protected
 
   def build_code(type, op, expr_val, scope)
-    ne_expr = NeExpr.new(@expr, ConstantExpr.build_constant(@expr.type(scope), 0))
+    ne_expr = NeExpr.new(@expr, ConstantExpr.build_constant(@expr.type(scope), 0), @lineno)
     expr_code, expr_val = ne_expr.code(scope)
     code, val = super(ne_expr.type(scope), op, expr_val, scope)
     return expr_code + code, val

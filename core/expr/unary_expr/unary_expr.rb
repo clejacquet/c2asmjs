@@ -1,8 +1,9 @@
 require_relative('../../error/language_error')
 
 class UnaryExpr
-  def initialize(expr)
+  def initialize(expr, lineno)
     @expr = expr
+    @lineno = lineno
   end
 
   def code(scope)
@@ -20,7 +21,11 @@ class UnaryExpr
   end
 
   def type(scope)
-    @expr.type(scope)
+    begin
+      @expr.type(scope)
+    rescue
+      :error
+    end
   end
 
   def try_eval

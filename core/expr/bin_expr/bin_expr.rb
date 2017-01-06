@@ -1,19 +1,37 @@
-require_relative('../../error/language_error')
+require_relative('../../error/id_eval_at_compilation_error')
+require_relative('../../error_handler')
 
 class BinExpr
-  def initialize(expr1, expr2)
+  def initialize(expr1, expr2, lineno)
     @expr1 = expr1
     @expr2 = expr2
+    @lineno = lineno
   end
 
   def code(scope)
     expr1_type = @expr1.type(scope)
     expr2_type = @expr2.type(scope)
     dominant_type = Type.dominant_type(expr1_type, expr2_type, sym)
+    stop = false
 
     # OPTIMIZATION
-    expr1_code, expr1_type, expr1_val = try_optimize(@expr1, expr1_type, dominant_type, scope)
-    expr2_code, expr2_type, expr2_val = try_optimize(@expr2, expr2_type, dominant_type, scope)
+    begin
+      expr1_code, expr1_type, expr1_val = try_optimize(@expr1, expr1_type, dominant_type, scope)
+    rescue LanguageError => msg
+      ErrorHandler.instance.register_error(msg: msg, lineno: @lineno)
+      stop = true
+    end
+
+    begin
+      expr2_code, expr2_type, expr2_val = try_optimize(@expr2, expr2_type, dominant_type, scope)
+    rescue LanguageError => msg
+      ErrorHandler.instance.register_error(msg: msg, lineno: @lineno)
+      stop = true
+    end
+
+    if stop
+      return '', '%0'
+    end
 
     conversion_code = ''
     if expr1_type != expr2_type
@@ -34,7 +52,13 @@ class BinExpr
   end
 
   def type(scope)
-    Type.output_type(Type.dominant_type(@expr1.type(scope), @expr2.type(scope), sym), sym)
+    begin
+      expr1_type = @expr1.type(scope)
+      expr2_type = @expr2.type(scope)
+      Type.output_type(Type.dominant_type(expr1_type, expr2_type, sym), sym)
+    rescue
+      :error
+    end
   end
 
   protected
@@ -59,7 +83,7 @@ class BinExpr
       end
       expr_val = Type.val_to_llvm(expr_type, expr_val)
       expr_code = ''
-    rescue LanguageError
+    rescue IdEvalAtCompilationError, FakeExpressionEvalError
       expr_code, expr_val = expr.code(scope)
     end
     return expr_code, expr_type, expr_val

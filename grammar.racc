@@ -30,32 +30,32 @@ class Scanner
 
     logical_or_expression
     : logical_and_expression                            { val[0] }
-    | logical_or_expression OR logical_and_expression   { OrExpr.new(val[0], val[2]) }
+    | logical_or_expression OR logical_and_expression   { OrExpr.new(val[0], val[2], lineno) }
 
     logical_and_expression
     : comparison_expression                             { val[0] }
-    | logical_and_expression AND comparison_expression  { AndExpr.new(val[0], val[2]) }
+    | logical_and_expression AND comparison_expression  { AndExpr.new(val[0], val[2], lineno) }
 
 
 
     shift_expression
     : additive_expression                               { val[0] }
-    | shift_expression SHL additive_expression          { ShiftLeftExpr.new(val[0], val[2]) }
-    | shift_expression SHR additive_expression          { ShiftRightExpr.new(val[0], val[2]) }
+    | shift_expression SHL additive_expression          { ShiftLeftExpr.new(val[0], val[2], lineno) }
+    | shift_expression SHR additive_expression          { ShiftRightExpr.new(val[0], val[2], lineno) }
 
     primary_expression
-    : IDENTIFIER                                        { IdentifierExpr.new(val[0]) }
+    : IDENTIFIER                                        { IdentifierExpr.new(val[0], lineno) }
     | CONSTANTI                                         { ConstantIExpr.new(val[0]) }
     | CONSTANTF                                         { ConstantFExpr.new(val[0]) }
     | '(' expression ')'                                { val[1] }
-    | IDENTIFIER '(' ')'                                { FunctionCallExpr.new(val[0]) }
-    | IDENTIFIER '(' argument_expression_list ')'       { FunctionCallExpr.new(val[0], val[2]) }
-    | IDENTIFIER '[' expression ']'                      { ArrayElementExpr.new(val[0], val[2]) }
+    | IDENTIFIER '(' ')'                                { FunctionCallExpr.new(val[0], Array.new, lineno) }
+    | IDENTIFIER '(' argument_expression_list ')'       { FunctionCallExpr.new(val[0], val[2], lineno) }
+    | IDENTIFIER '[' expression ']'                     { ArrayElementExpr.new(val[0], val[2], lineno) }
 
     postfix_expression
     : primary_expression                                { val[0] }
-    | postfix_expression INC_OP                         { PostIncExpr.new(val[0]) }
-    | postfix_expression DEC_OP                         { PostDecExpr.new(val[0]) }
+    | postfix_expression INC_OP                         { PostIncExpr.new(val[0], lineno) }
+    | postfix_expression DEC_OP                         { PostDecExpr.new(val[0], lineno) }
 
     argument_expression_list
     : expression                                        { [ val[0] ] }
@@ -63,36 +63,36 @@ class Scanner
 
     unary_expression
     : postfix_expression                                { val[0] }
-    | INC_OP unary_expression                           { IncExpr.new(val[1]) }
-    | DEC_OP unary_expression                           { DecExpr.new(val[1]) }
-    | '-' unary_expression                              { NegExpr.new(val[1]) }
-    | '!' unary_expression                              { InvExpr.new(val[1]) }
+    | INC_OP unary_expression                           { IncExpr.new(val[1], lineno) }
+    | DEC_OP unary_expression                           { DecExpr.new(val[1], lineno) }
+    | '-' unary_expression                              { NegExpr.new(val[1], lineno) }
+    | '!' unary_expression                              { InvExpr.new(val[1], lineno) }
 
 
     multiplicative_expression
     : unary_expression                                  { val[0] }
-    | multiplicative_expression '*' unary_expression    { MulExpr.new(val[0], val[2]) }
-    | multiplicative_expression '/' unary_expression    { DivExpr.new(val[0], val[2]) }
-    | multiplicative_expression REM unary_expression    { RemExpr.new(val[0], val[2]) }
+    | multiplicative_expression '*' unary_expression    { MulExpr.new(val[0], val[2], lineno) }
+    | multiplicative_expression '/' unary_expression    { DivExpr.new(val[0], val[2], lineno) }
+    | multiplicative_expression REM unary_expression    { RemExpr.new(val[0], val[2], lineno) }
 
     additive_expression
     : multiplicative_expression                             { val[0] }
-    | additive_expression '+' multiplicative_expression     { AddExpr.new(val[0], val[2]) }
-    | additive_expression '-' multiplicative_expression     { SubExpr.new(val[0], val[2]) }
+    | additive_expression '+' multiplicative_expression     { AddExpr.new(val[0], val[2], lineno) }
+    | additive_expression '-' multiplicative_expression     { SubExpr.new(val[0], val[2], lineno) }
 
     comparison_expression
     : shift_expression                                  { val[0] }
-    | comparison_expression '<' shift_expression        { LtExpr.new(val[0], val[2]) }
-    | comparison_expression '>' shift_expression        { GtExpr.new(val[0], val[2]) }
-    | comparison_expression LE_OP shift_expression      { LeExpr.new(val[0], val[2]) }
-    | comparison_expression GE_OP shift_expression      { GeExpr.new(val[0], val[2]) }
-    | comparison_expression EQ_OP shift_expression      { EqExpr.new(val[0], val[2]) }
-    | comparison_expression NE_OP shift_expression      { NeExpr.new(val[0], val[2]) }
+    | comparison_expression '<' shift_expression        { LtExpr.new(val[0], val[2], lineno) }
+    | comparison_expression '>' shift_expression        { GtExpr.new(val[0], val[2], lineno) }
+    | comparison_expression LE_OP shift_expression      { LeExpr.new(val[0], val[2], lineno) }
+    | comparison_expression GE_OP shift_expression      { GeExpr.new(val[0], val[2], lineno) }
+    | comparison_expression EQ_OP shift_expression      { EqExpr.new(val[0], val[2], lineno) }
+    | comparison_expression NE_OP shift_expression      { NeExpr.new(val[0], val[2], lineno) }
 
     expression
-    : IDENTIFIER assignment_operator conditional_expression                   { AssignmentExprFactory.build(val[1], val[0], val[2]) }
-    | IDENTIFIER '[' expression ']' assignment_operator conditional_expression { ArrayAssignmentExpr.new(val[0], val[2], val[4], val[5]) }
-    | conditional_expression                                                  { val[0] }
+    : IDENTIFIER assignment_operator conditional_expression                    { AssignmentExprFactory.build(val[1], val[0], val[2], lineno) }
+    | IDENTIFIER '[' expression ']' assignment_operator conditional_expression { ArrayAssignmentExpr.new(val[0], val[2], val[4], val[5], lineno) }
+    | conditional_expression                                                   { val[0] }
 
     assignment_operator
     : '='                                               { :'=' }
@@ -105,8 +105,8 @@ class Scanner
     | SUB_ASSIGN                                        { :SUB_ASSIGN }
 
     declaration
-    : type_name declarator_list ';'                     { DeclarationBuilder.new(val[0], val[1]) }
-    | type_name declarator_list '=' expression ';'      { DeclarationBuilder.new(val[0], val[1], { mode: :expr, value: val[3] }) }
+    : type_name declarator_list ';'                     { DeclarationBuilder.new(val[0], val[1], nil, lineno) }
+    | type_name declarator_list '=' expression ';'      { DeclarationBuilder.new(val[0], val[1], { mode: :expr, value: val[3] }, lineno) }
 
     declarator_list
     : IDENTIFIER                                        { [ val[0] ] }
@@ -154,23 +154,23 @@ class Scanner
     | expression ';'                                    { val[0] }
 
     selection_statement
-    : IF '(' expression ')' statement   =LOWER_THAN_ELSE                { IfStatement.new(val[2], val[4]) }
-    | IF '(' expression ')' statement ELSE statement                    { IfStatement.new(val[2], val[4], val[6]) }
-    | FOR '(' expression ';' expression ';' expression ')' statement    { ForStatement.new(val[2], val[4], val[6], val[8]) }
-    | FOR '(' expression ';' expression ';'            ')' statement    { ForStatement.new(val[2], val[4], nil, val[7]) }
-    | FOR '(' expression ';'            ';' expression ')' statement    { ForStatement.new(val[2], nil, val[5], val[7]) }
-    | FOR '(' expression ';'            ';'            ')' statement    { ForStatement.new(val[2], nil, nil, val[6]) }
-    | FOR '('            ';' expression ';' expression ')' statement    { ForStatement.new(nil, val[3], val[5], val[7]) }
-    | FOR '('            ';' expression ';'            ')' statement    { ForStatement.new(nil, val[3], nil, val[6]) }
-    | FOR '('            ';'            ';' expression ')' statement    { ForStatement.new(nil, nil, val[4], val[6]) }
-    | FOR '('            ';'            ';'            ')' statement    { ForStatement.new(nil, nil, nil, val[5]) }
+    : IF '(' expression ')' statement   =LOWER_THAN_ELSE                { IfStatement.new(val[2], val[4], nil, lineno) }
+    | IF '(' expression ')' statement ELSE statement                    { IfStatement.new(val[2], val[4], val[6], lineno) }
+    | FOR '(' expression ';' expression ';' expression ')' statement    { ForStatement.new(val[2], val[4], val[6], val[8], lineno) }
+    | FOR '(' expression ';' expression ';'            ')' statement    { ForStatement.new(val[2], val[4], nil, val[7], lineno) }
+    | FOR '(' expression ';'            ';' expression ')' statement    { ForStatement.new(val[2], nil, val[5], val[7], lineno) }
+    | FOR '(' expression ';'            ';'            ')' statement    { ForStatement.new(val[2], nil, nil, val[6], lineno) }
+    | FOR '('            ';' expression ';' expression ')' statement    { ForStatement.new(nil, val[3], val[5], val[7], lineno) }
+    | FOR '('            ';' expression ';'            ')' statement    { ForStatement.new(nil, val[3], nil, val[6], lineno) }
+    | FOR '('            ';'            ';' expression ')' statement    { ForStatement.new(nil, nil, val[4], val[6], lineno) }
+    | FOR '('            ';'            ';'            ')' statement    { ForStatement.new(nil, nil, nil, val[5], lineno) }
 
     iteration_statement
-    : WHILE '(' expression ')' statement                { WhileStatement.new(val[2], val[4]) }
-    | DO statement WHILE '(' expression ')' ';'         { DoWhileStatement.new(val[4], val[1]) }
+    : WHILE '(' expression ')' statement                { WhileStatement.new(val[2], val[4], nil, lineno) }
+    | DO statement WHILE '(' expression ')' ';'         { DoWhileStatement.new(val[4], val[1], lineno) }
 
     jump_statement
-    : RETURN ';'                                        { Return.new }
+    : RETURN ';'                                        { Return.new(nil) }
     | RETURN expression ';'                             { Return.new(val[1]) }
 
     program
@@ -188,7 +188,7 @@ class Scanner
     | declaration                                       { val[0].build_global }
 
     function_definition
-    : type_name declarator compound_statement           { Function.new(val[0], val[1], val[2]) }
+    : type_name declarator compound_statement           { Function.new(val[0], val[1], val[2], lineno) }
 end
 
 ---- header ----
@@ -205,7 +205,8 @@ def initialize
 end
 
 def on_error(t, val, vstack)
-    puts "Error: unexpected token (at line #{lineno}): #{val} [#{token_to_str(t)}]"
+    msg = "Error: unexpected token (at line #{lineno}): #{val}"
+    ErrorHandler.instance.register_error(msg: msg, lineno: lineno)
 end
 
 ---- footer ----

@@ -37,12 +37,20 @@ class Main
     ]))
 
     if ARGV.size >= 1
-      begin
         code = @scanner.scan_file ARGV[0]
-        puts code
-      rescue LanguageError => msg
-        STDERR.puts msg
-      end
+
+        errors = ErrorHandler.instance.errors
+
+        if errors.length == 0
+          puts code
+        else
+          STDERR.puts("#{errors.length} errors found during compilation!")
+          errors.each_index do |error_id|
+            STDERR.puts("  > [#{error_id}] (at line #{errors[error_id][:lineno]}) #{errors[error_id][:msg]}")
+          end
+          STDERR.puts('Compilation failed!')
+          exit(1)
+        end
     else
       raise 'Error, no filename provided !'
     end

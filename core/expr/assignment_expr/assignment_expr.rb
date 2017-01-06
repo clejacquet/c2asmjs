@@ -1,9 +1,10 @@
 require_relative('../../error/id_eval_at_compilation_error')
 
 class AssignmentExpr
-  def initialize(id, expr)
+  def initialize(id, expr, lineno)
     @id = id
     @expr = expr
+    @lineno = lineno
   end
 
   def code(scope)
@@ -16,10 +17,15 @@ class AssignmentExpr
     begin
       expr_val = Type.val_to_llvm(type, @expr.try_eval)
       expr_code = ''
-    rescue StandardError
-      expr_code, expr_val = @expr.code(scope)
-      conversion_code, expr_val = Type.build_conversion(expr_type, type, expr_val, scope)
-      expr_code += conversion_code
+    rescue IdEvalAtCompilationError, FakeExpressionEvalError
+      begin
+        expr_code, expr_val = @expr.code(scope)
+        conversion_code, expr_val = Type.build_conversion(expr_type, type, expr_val, scope)
+        expr_code += conversion_code
+      rescue LanguageError => msg
+        ErrorHandler.instance.register_error(msg: msg, lineno: @lineno)
+        return '', ''
+      end
     end
 
     return "#{expr_code}  store #{llvm_type} #{expr_val}, #{llvm_type}* #{var}\n", expr_val
@@ -30,6 +36,10 @@ class AssignmentExpr
   end
 
   def type(scope)
-    @expr.type(scope)
+    begin
+      @expr.type(scope)
+    rescue
+      :error
+    end
   end
 end
