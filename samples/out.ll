@@ -58,7 +58,7 @@ define i32 @main() {
   %19 = load i32, i32* %12
   %20 = load i32, i32* %1
   %21 = icmp slt i32 %19, %20
-  br i1 %21, label %22, label %45
+  br i1 %21, label %22, label %46
 
 ; <label>:22
   %23 = load i32, i32* %12
@@ -84,36 +84,38 @@ define i32 @main() {
   %42 = getelementptr inbounds double, double* %11, i64 %41
   store double %39, double* %42
   %43 = load i32, i32* %12
-  %44 = add i32 %43, 1
-  store i32 %44, i32* %12
+  call void @print_int(i32 %43)
+  %44 = load i32, i32* %12
+  %45 = add i32 %44, 1
+  store i32 %45, i32* %12
   br label %18
 
-; <label>:45
-  %46 = load i32, i32* %15
-  br label %47
+; <label>:46
+  %47 = load i32, i32* %15
+  br label %48
 
-; <label>:47
-  %48 = load i32, i32* %15
-  %49 = icmp sge i32 %48, 0
-  br i1 %49, label %50, label %61
+; <label>:48
+  %49 = load i32, i32* %15
+  %50 = icmp sge i32 %49, 0
+  br i1 %50, label %51, label %62
 
-; <label>:50
-  %51 = load i32, i32* %16
-  %52 = load i32, i32* %15
-  %53 = sext i32 %52 to i64
-  %54 = getelementptr inbounds double, double* %11, i64 %53
-  %55 = load double, double* %54
-  %56 = sitofp i32 %51 to double
-  %57 = fadd double %56, %55
-  %58 = fptosi double %57 to i32
-  store i32 %58, i32* %16
-  %59 = load i32, i32* %15
-  %60 = sub i32 %59, 1
-  store i32 %60, i32* %15
-  br label %47
+; <label>:51
+  %52 = load i32, i32* %16
+  %53 = load i32, i32* %15
+  %54 = sext i32 %53 to i64
+  %55 = getelementptr inbounds double, double* %11, i64 %54
+  %56 = load double, double* %55
+  %57 = sitofp i32 %52 to double
+  %58 = fadd double %57, %56
+  %59 = fptosi double %58 to i32
+  store i32 %59, i32* %16
+  %60 = load i32, i32* %15
+  %61 = sub i32 %60, 1
+  store i32 %61, i32* %15
+  br label %48
 
-; <label>:61
-  %62 = load i32, i32* %16
-  %63 = srem i32 %62, 256
-  ret i32 %63
+; <label>:62
+  %63 = load i32, i32* %16
+  %64 = srem i32 %63, 256
+  ret i32 %64
 }
