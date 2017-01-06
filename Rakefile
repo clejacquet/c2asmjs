@@ -8,6 +8,7 @@ tests =
        basic_oper_test
        for_test
        while_test
+       func_test
     )
 
 =begin Tests d'erreur de compilation
@@ -58,6 +59,7 @@ task :test, [:file] => :build do |t, args|
 end
 
 task :tests => :build do
+  success = 0
   for filename in tests
     my_ret = -1
     clang_ret = -1
@@ -75,8 +77,10 @@ task :tests => :build do
       puts("Test #{filename} failed : clang returns #{clang_ret}, got #{my_ret}\n")
     else
       puts("Test #{filename} succeeded : both returned #{my_ret}\n")
+      success += 1
     end
   end
+  puts("#{success} tests succeeded out of a total of #{tests.length} tests")
 end
 
 =begin
