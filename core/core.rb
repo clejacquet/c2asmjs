@@ -28,6 +28,9 @@ require_relative('expr/unary_expr/post_unary_expr')
 require_relative('expr/unary_expr/post_inc_expr')
 require_relative('expr/unary_expr/post_dec_expr')
 
+require_relative('expr/array_element_expr')
+require_relative('expr/array_assignment_expr')
+
 require_relative('expr/identifier_expr')
 require_relative('expr/function_call_expr')
 require_relative('expr/function')

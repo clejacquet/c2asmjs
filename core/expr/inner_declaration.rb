@@ -19,8 +19,13 @@ class InnerDeclaration
   def code_no_expr(scope)
     @declarator_list.reduce('') do |acc, id|
       reg = scope.new_register(false)
-      scope.new_id(id, reg, @type)
-      acc + allocation("%#{reg}")
+      if id.is_a? Hash
+        scope.new_id(id[:id], reg, @type, id[:size])
+        acc + array_allocation("%#{reg}", id[:size]) #+ "store #{type} 0, #{type}* #{reg}\n"
+      else
+        scope.new_id(id, reg, @type)
+        acc + allocation("%#{reg}")
+      end
     end
   end
 
@@ -45,14 +50,9 @@ class InnerDeclaration
 
     alloc_code = @declarator_list.reduce('') do |acc, id|
       reg = scope.new_register(false)
-      if id.is_a? Array
-        scope.new_id(@declarator_list, reg, expr_type)
-        array_allocation(reg, @value) + "store #{type} 0, #{type}* #{reg}\n"
-      else
         scope.new_id(id, reg, @type)
         conversion_code, expr_val = Type.build_conversion(expr_type, @type, expr_val, scope)
         acc + allocation("%#{reg}") + conversion_code + store("%#{reg}", expr_val)
-      end
     end
 
       expr_code + alloc_code
@@ -63,9 +63,9 @@ class InnerDeclaration
     "  #{reg} = alloca #{llvm_type}\n"
   end
 
-  def array_allocation(size, reg)
+  def array_allocation(reg, size)
     llvm_type = Type.to_llvm(@type)
-    "  #{reg} = alloca [#{size}*#{llvm_type}]\n"
+    "  #{reg} = alloca [#{size} x #{llvm_type}]\n"
   end
 
   def store(reg, expr_reg)

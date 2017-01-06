@@ -61,4 +61,16 @@ class InnerScope < Scope
       "%#{@id_table.get_reg(id)}"
     end
   end
+
+  def get_array_size(id)
+    if not @id_table.has_id?(id)
+      if not @next_scope.nil?
+        return @next_scope.get_array_size(id)
+      else
+        raise IdentifierNotDefinedError.new(id.to_sym, -1)
+      end
+    else
+      @id_table.get_array_size(id)
+    end
+  end
 end

@@ -50,6 +50,7 @@ class Scanner
     | '(' expression ')'                                { val[1] }
     | IDENTIFIER '(' ')'                                { FunctionCallExpr.new(val[0]) }
     | IDENTIFIER '(' argument_expression_list ')'       { FunctionCallExpr.new(val[0], val[2]) }
+    | IDENTIFIER '[' CONSTANTI ']'                      { ArrayElementExpr.new(val[0], val[2]) }
 
     postfix_expression
     : primary_expression                                { val[0] }
@@ -89,8 +90,9 @@ class Scanner
     | comparison_expression NE_OP shift_expression      { NeExpr.new(val[0], val[2]) }
 
     expression
-    : IDENTIFIER assignment_operator conditional_expression         { AssignmentExprFactory.build(val[1], val[0], val[2]) }
-    | conditional_expression                                        { val[0] }
+    : IDENTIFIER assignment_operator conditional_expression                   { AssignmentExprFactory.build(val[1], val[0], val[2]) }
+    | IDENTIFIER '[' CONSTANTI ']' assignment_operator conditional_expression { ArrayAssignmentExpr.new(val[0], val[2], val[4], val[5]) }
+    | conditional_expression                                                  { val[0] }
 
     assignment_operator
     : '='                                               { :'=' }
@@ -107,10 +109,10 @@ class Scanner
     | type_name declarator_list '=' expression ';'      { DeclarationBuilder.new(val[0], val[1], { mode: :expr, value: val[3] }) }
 
     declarator_list
-    : IDENTIFIER                        { [ val[0] ] }
-    | IDENTIFIER '[' CONSTANTI ']' { [val[0], val[2]] }
-    | declarator_list ',' IDENTIFIER    { val[0].push(val[2]) }
-    | declarator_list ',' IDENTIFIER '[' CONSTANTI ']' { val[0].push([val[2], val[4]]) }
+    : IDENTIFIER                                        { [ val[0] ] }
+    | IDENTIFIER '[' CONSTANTI ']'                      { [{id: val[0], size: val[2]}] }
+    | declarator_list ',' IDENTIFIER                    { val[0].push(val[2]) }
+    | declarator_list ',' IDENTIFIER '[' CONSTANTI ']'  { val[0].push({id: val[2], size: val[4]}) }
 
     type_name
     : VOID                                              { :void }
