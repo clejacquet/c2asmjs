@@ -32,10 +32,4 @@ For running **samples/sample1.c**: `rake run[samples/sample1.c]`
 
     rake clean
     
-## Evolutions possibles
-    Gestion d'opérations "dangereuses" à la compilation (générer un warning en cas d'overflow, ...)
-    Extensions du langage (type bool <=> i1 en llvm, gérer l'inclusion de fichier, ...)
-    Plusieurs return dans une fonction
-    
-    
     
