@@ -94,6 +94,9 @@ module Type
                                   (value.respond_to? :to_i and (value.to_i == 0 or value.to_i == 1)) },
           to_str: lambda { |value| (value != 0 or value == true) ? 'true' : 'false' }
       },
+      long: {
+        llvm: 'i64'
+      },
       void: {
           llvm: 'void',
           policy: lambda { |value| raise StandardError("On void.policy: Void cannot have a value #{value}") },
@@ -320,11 +323,13 @@ module Type
   CONVERSION_OPERATORS = {
       integer: {
           float: 'sitofp',
-          boolean: 'zext'
+          boolean: 'zext',
+          long: 'sext'
       },
       float: {
           integer: 'fptosi',
-          boolean: 'fptosi'
+          boolean: 'fptosi',
+          long: 'fptosi'
       },
       boolean: {
           integer: 'zext',

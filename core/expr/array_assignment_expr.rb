@@ -10,10 +10,12 @@ class ArrayAssignmentExpr < ArrayElementExpr
   end
 
   def code(scope)
-    type = 'i32' # to-do
-    #ass_code = AssignementExprFactory(@ass_op, @array_id, @ass_expr).code(scope)
+    type = scope.get_type(@array_id)
+    llvm_type = Type.to_llvm(type)
     ass_expr_code, ass_expr_reg = @ass_expr.code(scope)
+    ass_type = @ass_expr.type(scope)
+    convert_code, convert_reg = Type.build_conversion(ass_type, type, ass_expr_reg, scope)
     element_code, element_reg = get_element_code(type, scope)
-    return ass_expr_code + element_code + "store #{type} #{ass_expr_reg}, #{type}* #{element_reg}\n", element_reg
+    return ass_expr_code + convert_code + element_code + "store #{llvm_type} #{convert_reg}, #{llvm_type}* #{element_reg}\n", element_reg
   end
 end
