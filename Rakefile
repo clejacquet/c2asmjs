@@ -4,6 +4,10 @@ tests =
        comp_test
        cond_test
        shift_test
+       or_and
+       basic_oper_test
+       for_test
+       while_test
     )
 
 =begin Tests d'erreur de compilation
